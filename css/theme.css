@@ -281,7 +281,7 @@ html.lms-dark {
     --manga-tone: rgba(var(--lms-primary-rgb), .14);
     --manga-scrim: rgba(241, 245, 249, .25);
     --glass-alpha: 80%;
-    --glass-blur: 14px;
+    --glass-blur: 7px;
 }
 html.lms-dark {
     --manga-ink: var(--lms-text-muted);
@@ -290,7 +290,7 @@ html.lms-dark {
     --manga-slab: #000000;
     --manga-tone: rgba(255, 255, 255, .05);
     --manga-scrim: rgba(0, 0, 0, .40);
-    --glass-alpha: 74%;
+    --glass-alpha: 20%;
 }
 
 /* ============================================================
