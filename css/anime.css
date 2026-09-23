@@ -1,0 +1,591 @@
+/* ============================================================
+   Manga layer
+   ------------------------------------------------------------
+   Loaded last on both sites. Everything here is scoped to
+   html.lms-manga, which theme-core.js sets while "Anime style" is on. Colours come from the --manga-*
+   and --glass-* tokens in theme.css.
+
+   The look, in order of loudness:
+     1. The page title is an inked slab with focus lines.
+     2. Boxes and panels are comic panels: ink outline, hard shadow.
+     3. Page background carries a wallpaper, or a faint screentone.
+        With a wallpaper, panels and navigation turn to glass (end of file).
+   Everything else (tables, forms, text) stays quiet on purpose.
+
+   Textures are CSS gradients. The assets are the wallpapers in
+   images/wallpapers/ (original artwork, set by theme-core.js as
+   --manga-wallpaper) and the display face, Dela Gothic One
+   (SIL OFL 1.1, fonts/OFL-DelaGothicOne.txt).
+   ============================================================ */
+
+/* The absolute extension URL is the documented way to reach a packaged
+   file from a content-script stylesheet; Chrome fills in the id. */
+@font-face {
+    font-family: 'LMS Manga Display';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/dela-gothic-one-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+                   U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+                   U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'LMS Manga Display';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('chrome-extension://__MSG_@@extension_id__/fonts/dela-gothic-one-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+                   U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+                   U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+html.lms-manga {
+    --manga-display: 'LMS Manga Display', 'Dela Gothic One', Impact, 'Arial Black', sans-serif;
+    --manga-line: 2px;
+    --manga-drop: 5px;
+
+    /* Panels have near-square corners; ink is cut, not rounded. */
+    --lms-radius-sm: 2px;
+    --lms-radius: 3px;
+    --lms-radius-lg: 4px;
+    --lms-shadow: none;
+    --lms-shadow-md: none;
+    --lms-shadow-lg: none;
+    --lms-ring: 0 0 0 3px var(--manga-pop);
+}
+
+/* ============================================================
+   1. PAGE TITLE: the one loud element
+   ============================================================ */
+
+/* Focus lines radiate from a point just past the right edge; the solid
+   layer on top fades them out before they reach the title text. */
+html.lms-manga .content-header > h1,
+html.lms-manga #pageHeading {
+    position: relative !important;
+    overflow: hidden !important;
+    background:
+        linear-gradient(90deg, var(--manga-slab) 28%, transparent 78%),
+        repeating-conic-gradient(from 0deg at 108% 50%,
+            rgba(255,255,255,.22) 0deg .8deg,
+            transparent .7deg 5deg),
+        var(--manga-slab) !important;
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    border-left: 10px solid var(--manga-stripe) !important;
+    border-radius: var(--lms-radius) !important;
+    box-shadow: var(--manga-drop) var(--manga-drop) 0 var(--manga-shadow) !important;
+    animation: manga-slam 320ms var(--lms-ease-out) both;
+}
+
+html.lms-manga .content-header > h1 {
+    padding: 18px 22px !important;
+    color: var(--lms-header-text) !important;
+    font-family: var(--manga-display) !important;
+    font-weight: 400 !important;
+    font-size: 26px !important;
+    line-height: 1.2 !important;
+    letter-spacing: .01em !important;
+}
+
+html.lms-manga #pageHeading {
+    padding: 16px 22px !important;
+    margin: 0 0 24px !important;
+}
+
+html.lms-manga #pageHeading h1,
+html.lms-manga h1#pageTitle_h1 {
+    color: var(--lms-header-text) !important;
+    font-family: var(--manga-display) !important;
+    font-weight: 400 !important;
+    font-size: 24px !important;
+    line-height: 1.2 !important;
+}
+
+html.lms-manga .content-header > h1 small,
+html.lms-manga #pageHeading small,
+html.lms-manga #pageHeading .breadcrumb,
+html.lms-manga #pageHeading .breadcrumb a,
+html.lms-manga #pageHeading .breadcrumb > .active {
+    color: rgba(255,255,255,.78) !important;
+    background: transparent !important;
+}
+
+html.lms-manga h1#pageTitle_h1 .fa,
+html.lms-manga h1#pageTitle_h1 .fas {
+    color: var(--manga-stripe) !important;
+}
+
+/* Wipes in from the left once per page load. theme.css holds animations
+   while the page boots and drops them under reduced motion. */
+@keyframes manga-slam {
+    from { clip-path: inset(0 100% 0 0); transform: translateX(-12px); }
+    to   { clip-path: inset(0 0 0 0);    transform: none; }
+}
+
+/* ============================================================
+   2. PANELS
+   ============================================================ */
+
+html.lms-manga .box,
+html.lms-manga .panel,
+html.lms-manga .info-box,
+html.lms-manga .small-box,
+html.lms-manga .card,
+html.lms-manga .well {
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    border-radius: var(--lms-radius) !important;
+    box-shadow: var(--manga-drop) var(--manga-drop) 0 var(--manga-shadow) !important;
+}
+
+html.lms-manga .box:hover,
+html.lms-manga .panel:hover,
+html.lms-manga .info-box:hover,
+html.lms-manga .small-box:hover {
+    transform: none !important;
+    box-shadow: var(--manga-drop) var(--manga-drop) 0 var(--manga-shadow) !important;
+}
+
+/* The CMS sidebar is built from a .panel; it must stay flat. */
+html.lms-manga aside#sideBar .panel,
+html.lms-manga #sideMenuList,
+html.lms-manga .panel-group .panel + .panel {
+    box-shadow: none !important;
+}
+html.lms-manga aside#sideBar .panel {
+    border: none !important;
+}
+
+/* Header strip: solid fill on the left, screentone showing through on the
+   right. Done with background layers rather than a pseudo-element because
+   Bootstrap's clearfix already owns ::before/::after on these. */
+html.lms-manga .box-header,
+html.lms-manga .panel-heading,
+html.lms-manga .panel-default > .panel-heading {
+    background:
+        linear-gradient(90deg, var(--lms-primary) 45%, rgba(var(--lms-primary-rgb), 0) 100%),
+        radial-gradient(circle, var(--lms-on-primary) 1.1px, transparent 1.5px) 0 0 / 6px 6px,
+        var(--lms-primary) !important;
+    border-bottom: var(--manga-line) solid var(--manga-ink) !important;
+    border-radius: 0 !important;
+}
+
+/* Dark mode normally swaps the filled header for a tint with a side rail.
+   The manga themes keep the solid fill in both modes, so the text follows it. */
+html.lms-manga .box-header .box-title,
+html.lms-manga .box-header h3,
+html.lms-manga .box-header h4,
+html.lms-manga .box-header div,
+html.lms-manga .box-header span {
+    color: var(--lms-on-primary) !important;
+}
+html.lms-manga .box-header .box-title {
+    padding-left: 0 !important;
+    border-left: none !important;
+}
+
+html.lms-manga .box-header .box-title,
+html.lms-manga .box-header h3,
+html.lms-manga .box-header h4,
+html.lms-manga .panel-heading .panel-title,
+html.lms-manga .panel-title {
+    font-family: var(--manga-display) !important;
+    font-weight: 400 !important;
+    font-size: 16px !important;
+    letter-spacing: .01em !important;
+}
+
+/* Plain headings inside content pick up the display face too. */
+html.lms-manga .content h2,
+html.lms-manga .content h3,
+html.lms-manga #pageContent h2,
+html.lms-manga #pageContent h3,
+html.lms-manga .modal-title {
+    font-family: var(--manga-display) !important;
+    font-weight: 400 !important;
+}
+
+html.lms-manga .modal-content {
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    box-shadow: 8px 8px 0 var(--manga-shadow) !important;
+}
+
+html.lms-manga .dropdown-menu,
+html.lms-manga .lms-custom-select-menu {
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    box-shadow: 4px 4px 0 var(--manga-shadow) !important;
+}
+
+/* ============================================================
+   3. PAGE BACKGROUND
+   ============================================================ */
+
+html.lms-manga .content-wrapper,
+html.lms-manga .right-side,
+html.lms-manga #pageContainer,
+html.lms-manga #pageContent {
+    background:
+        radial-gradient(circle, var(--manga-tone) 1px, transparent 1.4px) 0 0 / 7px 7px,
+        var(--lms-bg) !important;
+}
+
+/* ---------- Wallpaper ----------
+   A fixed layer behind the whole page: wallpaper, then a scrim in the
+   page colour so text that sits straight on the background stays
+   readable, then the screentone. A position:fixed element is composited
+   once, which is far cheaper on scroll than background-attachment:fixed.
+
+   The page's own background layers have to be cleared for it to show;
+   html keeps the page colour so nothing flashes before the image loads. */
+html.lms-manga.lms-wallpaper {
+    background-color: var(--lms-bg) !important;
+}
+
+html.lms-manga.lms-wallpaper body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(circle, var(--manga-tone) 1px, transparent 1.4px) 0 0 / 7px 7px,
+        linear-gradient(var(--manga-scrim), var(--manga-scrim)),
+        var(--manga-wallpaper) center / cover no-repeat,
+        var(--lms-bg);
+}
+
+html.lms-manga.lms-wallpaper body,
+html.lms-manga.lms-wallpaper body.hold-transition,
+html.lms-manga.lms-wallpaper body.sidebar-mini,
+html.lms-manga.lms-wallpaper .wrapper,
+html.lms-manga.lms-wallpaper .content-wrapper,
+html.lms-manga.lms-wallpaper .right-side,
+html.lms-manga.lms-wallpaper #pageContainer,
+html.lms-manga.lms-wallpaper #pageContent {
+    background: transparent !important;
+}
+
+/* AdminLTE paints .wrapper with the sidebar colour to fill the column under
+   a short sidebar. With the wrapper cleared, the sidebar fills it itself. */
+html.lms-manga.lms-wallpaper .main-sidebar {
+    min-height: 100vh !important;
+}
+
+/* The footer strip sits straight on the wallpaper, so it gets a surface. */
+html.lms-manga.lms-wallpaper .main-footer {
+    background: var(--lms-surface) !important;
+    border-top: var(--manga-line) solid var(--manga-ink) !important;
+}
+
+/* ============================================================
+   HEADER AND SIDEBAR
+   ============================================================ */
+
+/* An inset stripe instead of a border, so the header keeps the exact
+   height the sidebar offset is calculated from. */
+html.lms-manga .main-header .navbar,
+html.lms-manga .main-header .logo,
+html.lms-manga header#header {
+    border-bottom: none !important;
+    box-shadow: inset 0 -4px 0 var(--manga-stripe) !important;
+}
+
+html.lms-manga .main-header .logo {
+    background: var(--lms-header-bg) !important;
+}
+html.lms-manga .main-header .logo:hover {
+    background: var(--lms-sidebar-hover) !important;
+}
+
+html.lms-manga .main-header .logo,
+html.lms-manga .main-header .logo .logo-lg,
+html.lms-manga .main-header .logo .logo-mini,
+html.lms-manga #brandName,
+html.lms-manga #brandShortName,
+html.lms-manga #brandAlias {
+    font-family: var(--manga-display) !important;
+    font-weight: 400 !important;
+    letter-spacing: .02em !important;
+}
+
+html.lms-manga .main-header .navbar h5 {
+    background: var(--manga-pop) !important;
+    color: var(--manga-on-pop) !important;
+    border: none !important;
+    border-radius: var(--lms-radius-sm) !important;
+    font-weight: 700 !important;
+}
+
+html.lms-manga .sidebar-menu > li > a,
+html.lms-manga aside#sideBar .list-group-item,
+html.lms-manga #sideMenuList > a.list-group-item {
+    color: #d6d6d6 !important;
+}
+
+html.lms-manga .sidebar-menu > li > a > i,
+html.lms-manga aside#sideBar .list-group-item .fa {
+    color: #9a9a9a !important;
+}
+
+html.lms-manga .sidebar-menu > li > a:hover,
+html.lms-manga aside#sideBar .list-group-item:hover,
+html.lms-manga #sideMenuList > a.list-group-item:hover {
+    color: #ffffff !important;
+    border-left-color: var(--manga-stripe) !important;
+}
+
+html.lms-manga .sidebar-menu > li > a:hover > i,
+html.lms-manga aside#sideBar .list-group-item:hover .fa {
+    color: var(--manga-stripe) !important;
+}
+
+html.lms-manga .sidebar-menu > li > a::after {
+    background: var(--manga-stripe) !important;
+}
+
+/* Active item is a highlighter stroke. */
+html.lms-manga .sidebar-menu > li.active > a,
+html.lms-manga .sidebar-menu > li.li-highlight > a,
+html.lms-manga .sidebar-menu > li.li-highlight > a > span,
+html.lms-manga aside#sideBar .list-group-item.active,
+html.lms-manga #sideMenuList > a.list-group-item.active {
+    background: var(--manga-pop) !important;
+    color: var(--manga-on-pop) !important;
+    font-weight: 700 !important;
+}
+html.lms-manga .sidebar-menu > li.li-highlight {
+    background: transparent !important;
+}
+
+html.lms-manga .sidebar-menu > li.active > a > i,
+html.lms-manga .sidebar-menu > li.li-highlight > a > i,
+html.lms-manga aside#sideBar .list-group-item.active .fa,
+html.lms-manga #sideMenuList > a.list-group-item.active .fa {
+    color: var(--manga-on-pop) !important;
+}
+
+/* Slanted cut on the right. Skipped when the LMS sidebar is collapsed,
+   because the hover fly-out label lives inside the link and would be clipped. */
+html.lms-manga body:not(.sidebar-collapse) .sidebar-menu > li.active > a,
+html.lms-manga body:not(.sidebar-collapse) .sidebar-menu > li.li-highlight > a,
+html.lms-manga aside#sideBar .list-group-item.active,
+html.lms-manga #sideMenuList > a.list-group-item.active {
+    margin-right: 10px !important;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+}
+
+html.lms-manga .user-image,
+html.lms-manga .navbar-nav .avatar {
+    box-shadow: 0 0 0 2px var(--manga-pop) !important;
+}
+
+/* ============================================================
+   CONTROLS
+   ============================================================ */
+
+/* Buttons press into their shadow. The small header tools are excluded;
+   an offset shadow on a 20px icon button just looks like a rendering bug. */
+html.lms-manga .btn:not(.btn-box-tool):not(.btn-link) {
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    border-radius: var(--lms-radius-sm) !important;
+    box-shadow: 3px 3px 0 var(--manga-shadow) !important;
+    font-weight: 700 !important;
+}
+html.lms-manga .btn:not(.btn-box-tool):not(.btn-link):hover {
+    transform: translate(-1px, -1px) !important;
+    box-shadow: 4px 4px 0 var(--manga-shadow) !important;
+}
+html.lms-manga .btn:not(.btn-box-tool):not(.btn-link):active {
+    transform: translate(3px, 3px) !important;
+    box-shadow: 0 0 0 var(--manga-shadow) !important;
+}
+html.lms-manga .btn[disabled],
+html.lms-manga .btn.disabled {
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+html.lms-manga .form-control:focus,
+html.lms-manga .lms-custom-select-trigger:focus {
+    border-color: var(--manga-ink) !important;
+    box-shadow: 3px 3px 0 var(--manga-pop) !important;
+}
+
+html.lms-manga .label,
+html.lms-manga .badge {
+    border-radius: var(--lms-radius-sm) !important;
+    font-weight: 700 !important;
+}
+
+/* Progress bars get motion-line hatching. */
+html.lms-manga .progress {
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    border-radius: var(--lms-radius-sm) !important;
+    background: var(--lms-surface) !important;
+}
+html.lms-manga .progress-bar {
+    background-image: repeating-linear-gradient(-55deg,
+        rgba(255,255,255,.22) 0 5px, transparent 5px 11px) !important;
+}
+
+html.lms-manga .nav-tabs > li.active > a,
+html.lms-manga .nav-tabs > li.active > a:hover,
+html.lms-manga .nav-tabs > li.active > a:focus {
+    box-shadow: inset 0 4px 0 var(--manga-pop) !important;
+    font-weight: 700 !important;
+}
+
+html.lms-manga .pagination > .active > a,
+html.lms-manga .pagination > .active > span {
+    border-color: var(--manga-ink) !important;
+}
+
+html.lms-manga ::selection {
+    background: var(--manga-pop);
+    color: var(--manga-on-pop);
+}
+
+html.lms-manga a:focus-visible,
+html.lms-manga button:focus-visible,
+html.lms-manga input:focus-visible,
+html.lms-manga select:focus-visible,
+html.lms-manga textarea:focus-visible,
+html.lms-manga [tabindex]:focus-visible,
+html.lms-manga .btn:focus-visible {
+    outline: 2px solid var(--manga-ink) !important;
+    box-shadow: var(--lms-ring) !important;
+}
+
+html.lms-manga {
+    scrollbar-color: var(--manga-ink) transparent;
+}
+html.lms-manga ::-webkit-scrollbar-thumb {
+    background: var(--manga-ink) !important;
+    border-radius: 0 !important;
+}
+
+/* ============================================================
+   GLASS
+   ------------------------------------------------------------
+   With a wallpaper showing, panels, the nav bar and the sidebar
+   become frosted glass so the wallpaper reads through them.
+   --glass-alpha is how much of the solid colour each keeps (medium:
+   76% light, 70% dark); the blur keeps text readable over busy art.
+
+   backdrop-filter makes an element the containing block for its
+   position:fixed children. A panel that holds a modal or the LMS
+   chat popup would trap it, so those panels stay solid.
+   ============================================================ */
+
+html.lms-manga.lms-wallpaper {
+    --glass-surface: color-mix(in srgb, var(--lms-surface) var(--glass-alpha), transparent);
+    --glass-chrome: color-mix(in srgb, var(--lms-header-bg) 80%, transparent);
+    --glass-side: color-mix(in srgb, var(--lms-sidebar-bg) 80%, transparent);
+    --glass-slab: color-mix(in srgb, var(--manga-slab) 82%, transparent);
+    --glass-filter: blur(var(--glass-blur)) saturate(1.4);
+}
+
+html.lms-manga.lms-wallpaper :is(.box, .panel, .info-box, .small-box, .card, .well):not(:has(.modal, .form-popup, .open-button)),
+html.lms-manga.lms-wallpaper .modal-content,
+html.lms-manga.lms-wallpaper .dropdown-menu,
+html.lms-manga.lms-wallpaper .lms-custom-select-menu {
+    background: var(--glass-surface) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+
+/* Nested panels and panel groups would stack blur on blur; the inner
+   ones just let the outer glass show. */
+html.lms-manga.lms-wallpaper :is(.box, .panel) :is(.box, .panel) {
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+}
+
+/* Everything inside a panel that paints its own solid surface. */
+html.lms-manga.lms-wallpaper :is(.box-body, .box-footer, .panel-body, .panel-footer, .table, .well),
+html.lms-manga.lms-wallpaper .table > tbody > tr > td,
+html.lms-manga.lms-wallpaper .table > thead > tr > td {
+    background-color: transparent !important;
+}
+
+/* Form fields keep more body so typed text is always crisp. */
+html.lms-manga.lms-wallpaper .form-control,
+html.lms-manga.lms-wallpaper .lms-custom-select-trigger {
+    background-color: color-mix(in srgb, var(--lms-surface) 88%, transparent) !important;
+}
+
+/* Page title slab. */
+html.lms-manga.lms-wallpaper .content-header > h1,
+html.lms-manga.lms-wallpaper #pageHeading {
+    background:
+        linear-gradient(90deg, var(--glass-slab) 28%, transparent 78%),
+        repeating-conic-gradient(from 0deg at 108% 50%,
+            rgba(255,255,255,.22) 0deg .8deg,
+            transparent .8deg 5deg),
+        var(--glass-slab) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+
+/* Nav bar. The logo block and the bar are separate elements on the LMS,
+   so each gets the same glass to read as one strip. */
+html.lms-manga.lms-wallpaper .main-header .navbar,
+html.lms-manga.lms-wallpaper .main-header .logo,
+html.lms-manga.lms-wallpaper header#header,
+html.lms-manga.lms-wallpaper header#header.navbar,
+html.lms-manga.lms-wallpaper header#header.navbar-fixed-top {
+    background: var(--glass-chrome) !important;
+    background-color: var(--glass-chrome) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+html.lms-manga.lms-wallpaper .main-header .logo:hover {
+    background: color-mix(in srgb, var(--lms-sidebar-hover) 85%, transparent) !important;
+}
+
+/* AdminLTE's header is in normal flow, so the wallpaper only shows through
+   it if nothing solid sits behind it. */
+html.lms-manga.lms-wallpaper .main-header {
+    background: transparent !important;
+}
+
+/* Sidebar. */
+html.lms-manga.lms-wallpaper .main-sidebar,
+html.lms-manga.lms-wallpaper .left-side,
+html.lms-manga.lms-wallpaper aside#sideBar {
+    background: var(--glass-side) !important;
+    background-color: var(--glass-side) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+html.lms-manga.lms-wallpaper .sidebar-menu > li > a:hover,
+html.lms-manga.lms-wallpaper aside#sideBar .list-group-item:hover {
+    background: rgba(255, 255, 255, .08) !important;
+}
+html.lms-manga.lms-wallpaper .sidebar-menu .treeview-menu,
+html.lms-manga.lms-wallpaper aside#sideBar .list-group-subMenu {
+    background: rgba(0, 0, 0, .18) !important;
+}
+
+/* A dark wallpaper under light glass (or a bright one under dark glass)
+   drags the glass toward the wrong end and muted text drops below 4.5:1.
+   Those pairings get a heavier wash in the page colour. The popup measures
+   an uploaded image's average brightness and theme-core.js writes the
+   result to data-lms-wallpaper-tone. */
+html.lms-manga.lms-wallpaper:not(.lms-dark)[data-lms-wallpaper-tone="dark"] {
+    --manga-scrim: color-mix(in srgb, var(--lms-bg) 50%, transparent);
+}
+html.lms-manga.lms-wallpaper.lms-dark[data-lms-wallpaper-tone="light"] {
+    --manga-scrim: color-mix(in srgb, var(--lms-bg) 60%, transparent);
+}
+
+/* Browsers without backdrop-filter get solid surfaces back. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    html.lms-manga.lms-wallpaper {
+        --glass-surface: var(--lms-surface);
+        --glass-chrome: var(--lms-header-bg);
+        --glass-side: var(--lms-sidebar-bg);
+        --glass-slab: var(--manga-slab);
+    }
+}

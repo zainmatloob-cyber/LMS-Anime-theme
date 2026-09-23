@@ -7,8 +7,9 @@
    Contains:
      1. Bundled Inter webfont (@font-face)
      2. Design tokens (:root) + dark-mode tokens
-     3. The 12 colour-theme overrides
-     4. Motion primitives (preload guard, reduced-motion)
+     3. Motion primitives (preload guard, reduced-motion)
+     4. Semantic palette and manga/glass tokens
+     5. The 13 themes, each a full light + dark palette (end of file)
    ============================================================ */
 
 /* ---------- Bundled Inter (no network request, CSP-safe) ---------- */
@@ -125,288 +126,6 @@ html.lms-dark {
 }
 
 /* ============================================================
-   THEME OVERRIDES
-   ============================================================ */
-
-/* --- Crimson --- */
-html.lms-theme-crimson {
-    --lms-primary: #991b1b;
-    --lms-primary-d: #7f1d1d;
-    --lms-accent: #9f1239;
-    --lms-primary-rgb: 153, 27, 27;
-    --lms-sidebar-active: #991b1b;
-    --lms-header-bg: #450a0a;
-    --lms-sidebar-bg: #450a0a;
-    --lms-sidebar-hover: #7f1d1d;
-}
-html.lms-dark.lms-theme-crimson {
-    --lms-primary: #b91c1c;
-    --lms-primary-d: #dc2626;
-    --lms-accent: #be1239;
-    --lms-primary-rgb: 185, 28, 28;
-    --lms-sidebar-active: #b91c1c;
-    --lms-header-bg: #450a0a;
-    --lms-sidebar-bg: #450a0a;
-    --lms-sidebar-hover: #7f1d1d;
-    --lms-bg: #130404;
-    --lms-surface: #200808;
-    --lms-border: #3d1010;
-}
-
-/* --- Forest --- */
-html.lms-theme-forest {
-    --lms-primary: #16a34a;
-    --lms-primary-d: #15803d;
-    --lms-accent: #059669;
-    --lms-primary-rgb: 22, 163, 74;
-    --lms-sidebar-active: #16a34a;
-    --lms-header-bg: #14532d;
-    --lms-sidebar-bg: #14532d;
-    --lms-sidebar-hover: #15803d;
-}
-html.lms-dark.lms-theme-forest {
-    --lms-primary: #22c55e;
-    --lms-primary-d: #4ade80;
-    --lms-accent: #34d399;
-    --lms-primary-rgb: 34, 197, 94;
-    --lms-sidebar-active: #22c55e;
-    --lms-header-bg: #14532d;
-    --lms-sidebar-bg: #14532d;
-    --lms-sidebar-hover: #15803d;
-    --lms-bg: #071a0e;
-    --lms-surface: #112b18;
-    --lms-border: #1e4a2c;
-}
-
-/* --- Baby Pink --- */
-html.lms-theme-pink {
-    --lms-primary: #ec4899;
-    --lms-primary-d: #db2777;
-    --lms-accent: #f472b6;
-    --lms-primary-rgb: 236, 72, 153;
-    --lms-sidebar-active: #ec4899;
-    --lms-header-bg: #831843;
-    --lms-sidebar-bg: #831843;
-    --lms-sidebar-hover: #9d174d;
-}
-html.lms-dark.lms-theme-pink {
-    --lms-primary: #f472b6;
-    --lms-primary-d: #f9a8d4;
-    --lms-accent: #fb7bac;
-    --lms-primary-rgb: 244, 114, 182;
-    --lms-sidebar-active: #f472b6;
-    --lms-header-bg: #831843;
-    --lms-sidebar-bg: #831843;
-    --lms-sidebar-hover: #9d174d;
-    --lms-bg: #1a0812;
-    --lms-surface: #2d1020;
-    --lms-border: #4d1f38;
-}
-
-/* --- Monochrome --- */
-html.lms-theme-mono {
-    --lms-primary: #111111;
-    --lms-primary-d: #000000;
-    --lms-accent: #333333;
-    --lms-primary-rgb: 17, 17, 17;
-    --lms-sidebar-active: #111111;
-    --lms-header-bg: #111111;
-    --lms-sidebar-bg: #111111;
-    --lms-sidebar-hover: #222222;
-}
-html.lms-dark.lms-theme-mono {
-    --lms-primary: #f0f0f0;
-    --lms-primary-d: #ffffff;
-    --lms-accent: #cccccc;
-    --lms-primary-rgb: 240, 240, 240;
-    --lms-on-primary: #111111;
-    --lms-on-primary-muted: rgba(17,17,17,.9);
-    --lms-sidebar-active: #f0f0f0;
-    --lms-header-bg: #111111;
-    --lms-sidebar-bg: #111111;
-    --lms-sidebar-hover: #222222;
-    --lms-bg: #0a0a0a;
-    --lms-surface: #141414;
-    --lms-border: #2a2a2a;
-}
-
-/* --- Purple --- */
-html.lms-theme-purple {
-    --lms-primary: #7c3aed;
-    --lms-primary-d: #6d28d9;
-    --lms-accent: #8b5cf6;
-    --lms-primary-rgb: 124, 58, 237;
-    --lms-sidebar-active: #7c3aed;
-    --lms-header-bg: #3b0764;
-    --lms-sidebar-bg: #3b0764;
-    --lms-sidebar-hover: #4c1d95;
-}
-html.lms-dark.lms-theme-purple {
-    --lms-primary: #8b5cf6;
-    --lms-primary-d: #a78bfa;
-    --lms-accent: #a78bfa;
-    --lms-primary-rgb: 139, 92, 246;
-    --lms-sidebar-active: #8b5cf6;
-    --lms-header-bg: #3b0764;
-    --lms-sidebar-bg: #3b0764;
-    --lms-sidebar-hover: #4c1d95;
-    --lms-bg: #0e0820;
-    --lms-surface: #1a1235;
-    --lms-border: #2e1f5e;
-}
-
-/* --- Teal --- */
-html.lms-theme-teal {
-    --lms-primary: #0d9488;
-    --lms-primary-d: #0f766e;
-    --lms-accent: #14b8a6;
-    --lms-primary-rgb: 13, 148, 136;
-    --lms-sidebar-active: #0d9488;
-    --lms-header-bg: #134e4a;
-    --lms-sidebar-bg: #134e4a;
-    --lms-sidebar-hover: #0f766e;
-}
-html.lms-dark.lms-theme-teal {
-    --lms-primary: #14b8a6;
-    --lms-primary-d: #2dd4bf;
-    --lms-accent: #2dd4bf;
-    --lms-primary-rgb: 20, 184, 166;
-    --lms-sidebar-active: #14b8a6;
-    --lms-header-bg: #134e4a;
-    --lms-sidebar-bg: #134e4a;
-    --lms-sidebar-hover: #0f766e;
-    --lms-bg: #05181a;
-    --lms-surface: #0d2b2d;
-    --lms-border: #1a4a4d;
-}
-
-/* --- Amber --- */
-html.lms-theme-amber {
-    --lms-primary: #d97706;
-    --lms-primary-d: #b45309;
-    --lms-accent: #f59e0b;
-    --lms-primary-rgb: 217, 119, 6;
-    --lms-sidebar-active: #d97706;
-    --lms-header-bg: #78350f;
-    --lms-sidebar-bg: #78350f;
-    --lms-sidebar-hover: #92400e;
-}
-html.lms-dark.lms-theme-amber {
-    --lms-primary: #f59e0b;
-    --lms-primary-d: #fbbf24;
-    --lms-accent: #fbbf24;
-    --lms-primary-rgb: 245, 158, 11;
-    --lms-sidebar-active: #f59e0b;
-    --lms-header-bg: #78350f;
-    --lms-sidebar-bg: #78350f;
-    --lms-sidebar-hover: #92400e;
-    --lms-bg: #1a0e02;
-    --lms-surface: #2d1e07;
-    --lms-border: #4d350f;
-}
-
-/* --- Ocean --- */
-html.lms-theme-ocean {
-    --lms-primary: #1d4ed8;
-    --lms-primary-d: #1e40af;
-    --lms-accent: #0891b2;
-    --lms-primary-rgb: 29, 78, 216;
-    --lms-sidebar-active: #1d4ed8;
-    --lms-header-bg: #1e3a8a;
-    --lms-sidebar-bg: #1e3a8a;
-    --lms-sidebar-hover: #1e40af;
-}
-html.lms-dark.lms-theme-ocean {
-    --lms-primary: #60a5fa;
-    --lms-primary-d: #93c5fd;
-    --lms-accent: #22d3ee;
-    --lms-primary-rgb: 96, 165, 250;
-    --lms-sidebar-active: #60a5fa;
-    --lms-header-bg: #0c234f;
-    --lms-sidebar-bg: #0c234f;
-    --lms-sidebar-hover: #1e3a8a;
-    --lms-bg: #071427;
-    --lms-surface: #10243e;
-    --lms-border: #1f3b61;
-}
-
-/* --- Sage --- */
-html.lms-theme-sage {
-    --lms-primary: #556b2f;
-    --lms-primary-d: #455825;
-    --lms-accent: #6f8f3d;
-    --lms-primary-rgb: 85, 107, 47;
-    --lms-sidebar-active: #556b2f;
-    --lms-header-bg: #3b4d24;
-    --lms-sidebar-bg: #3b4d24;
-    --lms-sidebar-hover: #4b6030;
-}
-html.lms-dark.lms-theme-sage {
-    --lms-primary: #9ab870;
-    --lms-primary-d: #adc58a;
-    --lms-accent: #88a960;
-    --lms-primary-rgb: 154, 184, 112;
-    --lms-sidebar-active: #9ab870;
-    --lms-header-bg: #2b3a1b;
-    --lms-sidebar-bg: #2b3a1b;
-    --lms-sidebar-hover: #3f5329;
-    --lms-bg: #0f160a;
-    --lms-surface: #1c2615;
-    --lms-border: #344426;
-}
-
-/* --- Rose --- */
-html.lms-theme-rose {
-    --lms-primary: #be185d;
-    --lms-primary-d: #9d174d;
-    --lms-accent: #e11d48;
-    --lms-primary-rgb: 190, 24, 93;
-    --lms-sidebar-active: #be185d;
-    --lms-header-bg: #881337;
-    --lms-sidebar-bg: #881337;
-    --lms-sidebar-hover: #9d174d;
-}
-html.lms-dark.lms-theme-rose {
-    --lms-primary: #fb7185;
-    --lms-primary-d: #fda4af;
-    --lms-accent: #f472b6;
-    --lms-primary-rgb: 251, 113, 133;
-    --lms-sidebar-active: #fb7185;
-    --lms-header-bg: #5e1130;
-    --lms-sidebar-bg: #5e1130;
-    --lms-sidebar-hover: #881337;
-    --lms-bg: #190913;
-    --lms-surface: #2a1020;
-    --lms-border: #4b1e37;
-}
-
-/* --- Dusk --- */
-html.lms-theme-dusk {
-    --lms-primary: #6366f1;
-    --lms-primary-d: #4f46e5;
-    --lms-accent: #475569;
-    --lms-primary-rgb: 99, 102, 241;
-    --lms-sidebar-active: #6366f1;
-    --lms-header-bg: #334155;
-    --lms-sidebar-bg: #334155;
-    --lms-sidebar-hover: #475569;
-}
-html.lms-dark.lms-theme-dusk {
-    --lms-primary: #a5b4fc;
-    --lms-primary-d: #c7d2fe;
-    --lms-accent: #94a3b8;
-    --lms-primary-rgb: 165, 180, 252;
-    --lms-sidebar-active: #a5b4fc;
-    --lms-header-bg: #1f2937;
-    --lms-sidebar-bg: #1f2937;
-    --lms-sidebar-hover: #334155;
-    --lms-bg: #0f1520;
-    --lms-surface: #1a2433;
-    --lms-border: #314055;
-}
-
-
-/* ============================================================
    MOTION PRIMITIVES
    ============================================================ */
 
@@ -484,85 +203,6 @@ a:focus:not(:focus-visible) {
 }
 
 /* ============================================================
-   DARK-MODE LINK CORRECTIONS
-   ------------------------------------------------------------
-   Blue, crimson and purple keep a deep primary in dark mode because it still
-   has to carry white button text. That same colour fails as link text on a
-   dark surface (2.9:1 - 4.2:1), so those three get a lighter --lms-link.
-   Every other theme's primary already clears 4.5:1 and inherits unchanged.
-   ============================================================ */
-
-/* Dark + no theme class = the default blue theme. */
-html.lms-dark:not([class*="lms-theme-"]) {
-    --lms-link: #93b4f0;   /* 6.99:1 on --lms-surface */
-}
-
-html.lms-dark.lms-theme-crimson {
-    --lms-link: #f87171;   /* 6.90:1 on --lms-surface */
-}
-
-html.lms-dark.lms-theme-purple {
-    --lms-link: #a78bfa;   /* 6.53:1 on --lms-surface */
-}
-
-/* ============================================================
-   FOREGROUND-ON-FILL CORRECTIONS
-   ------------------------------------------------------------
-   --lms-primary flips to a light tint in dark mode, but --lms-on-primary used
-   to stay #ffffff everywhere. That put white text on a near-white fill on every
-   panel heading, primary button, active tab and progress bar in dark mode
-   (1.1:1 - 4.2:1). The text colour now follows the fill's lightness.
-
-   Order matters: the light-theme list comes first so that html.lms-dark, at
-   equal specificity, wins for a page that is both dark and themed.
-   ============================================================ */
-
-/* Light themes whose primary is bright enough to need dark text on it. */
-html.lms-theme-forest,
-html.lms-theme-pink,
-html.lms-theme-teal,
-html.lms-theme-amber {
-    --lms-on-primary: #0b1220;
-    --lms-on-primary-muted: rgba(11, 18, 32, .78);
-
-    /* The same brightness that forces dark text on the fill also makes these
-       primaries too pale to read as link text on white (3.2:1 - 3.5:1). Their
-       existing --lms-primary-d step clears 4.5:1, so links use that. */
-    --lms-link: var(--lms-primary-d);
-}
-
-/* Every dark theme inverts primary to a light tint... */
-html.lms-dark {
-    --lms-on-primary: #0b1220;
-    --lms-on-primary-muted: rgba(11, 18, 32, .78);
-}
-
-/* ...except crimson, which stays a deep red even in dark mode. */
-html.lms-dark.lms-theme-crimson {
-    --lms-on-primary: #ffffff;
-    --lms-on-primary-muted: rgba(255, 255, 255, .9);
-}
-
-/* Two primaries sat in the dead zone where neither white nor dark text reached
-   4.5:1 (light dusk 4.47, dark purple 4.42). One step along their own ramp
-   clears it without changing the hue. */
-html.lms-theme-dusk:not(.lms-dark) {
-    --lms-primary: #4f46e5;
-    --lms-primary-rgb: 79, 70, 229;
-}
-
-html.lms-dark.lms-theme-purple {
-    --lms-primary: #a78bfa;
-    --lms-primary-rgb: 167, 139, 250;
-}
-
-/* Light pink's primary-d (#db2777) sits at 4.60:1 on white - fine alone, but it
-   falls to 4.17:1 once an alert tint darkens the background behind it. */
-html.lms-theme-pink:not(.lms-dark) {
-    --lms-primary-d: #be185d;
-}
-
-/* ============================================================
    SEMANTIC PALETTE
    ------------------------------------------------------------
    Success/info/warning/danger were fixed hex values that ignored dark mode:
@@ -605,4 +245,820 @@ html.lms-dark {
     --lms-warning-text: #fbbf24;
 
     --lms-text-muted: #a3b0c2;
+}
+
+/* ============================================================
+   MANGA LAYER TOKENS
+   ------------------------------------------------------------
+   theme-core.js adds `lms-manga` to <html> while Anime Style is on,
+   and css/anime.css hangs the ink borders, screentone, title slab and
+   glass panels off that class.
+
+   Tokens used only by anime.css:
+     --manga-ink      panel outlines
+     --manga-shadow   hard offset shadow under panels and buttons
+     --manga-pop      highlight fill (active nav, badges, focus)
+     --manga-on-pop   text on --manga-pop
+     --manga-stripe   accent line on the header and page title
+     --manga-slab     page-title background
+     --manga-tone     screentone dot colour
+     --manga-scrim    wash over the wallpaper
+     --glass-alpha    how much of the surface colour glass panels keep
+     --glass-blur     frost behind glass panels
+   ============================================================ */
+
+/* --- Fallbacks ---
+   Every theme below sets its own manga colours; these only fill in if a
+   theme block is ever missing one. The glass strength lives here and is
+   shared by all themes. */
+:root {
+    --manga-ink: var(--lms-header-bg);
+    --manga-shadow: var(--lms-header-bg);
+    --manga-pop: var(--lms-primary);
+    --manga-on-pop: var(--lms-on-primary);
+    --manga-stripe: var(--lms-accent);
+    --manga-slab: var(--lms-header-bg);
+    --manga-tone: rgba(var(--lms-primary-rgb), .14);
+    --manga-scrim: rgba(241, 245, 249, .25);
+    --glass-alpha: 80%;
+    --glass-blur: 14px;
+}
+html.lms-dark {
+    --manga-ink: var(--lms-text-muted);
+    --manga-shadow: #000000;
+    --manga-stripe: var(--lms-primary);
+    --manga-slab: #000000;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .40);
+    --glass-alpha: 74%;
+}
+
+/* ============================================================
+   THEMES
+   ------------------------------------------------------------
+   Thirteen complete palettes, each with a light and a dark block.
+   Every token a theme uses is set here, so there are no correction
+   layers to reason about. Blue is the default and has no class, so
+   its blocks match <html> without any lms-theme-* class.
+
+   A light block has the same specificity as html.lms-dark, so each
+   dark block (two classes) restates every token its light block sets.
+
+   Ratios are WCAG contrast. Muted text and links are held to 7:1 and
+   6.5:1 on white so they stay above 4.5:1 on glass panels.
+   Generated from one palette table; edit values in pairs.
+   ============================================================ */
+
+/* --- Midnight (blue): navy ink, sky-blue highlights --- */
+html:not([class*="lms-theme-"]) {
+    --lms-primary: #1d4ed8;           /* white on it 6.70:1 */
+    --lms-primary-d: #1e40af;
+    --lms-accent: #38bdf8;
+    --lms-primary-rgb: 29, 78, 216;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #1e40af;              /* 8.72:1 on white, 7.23:1 on page */
+    --lms-bg: #e5eaf3;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #0b1a3a;
+    --lms-sidebar-hover: #13295a;
+    --lms-sidebar-active: #38bdf8;
+    --lms-text: #0f172a;              /* 14.79:1 on page */
+    --lms-text-muted: #475569;        /* 7.58:1 on white */
+    --lms-border: #cbd5e1;
+    --lms-header-bg: #0b1a3a;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #0f172a;
+    --manga-shadow: #0b1a3a;
+    --manga-pop: #38bdf8;
+    --manga-on-pop: #000000;          /* 9.80:1 */
+    --manga-stripe: #38bdf8;
+    --manga-slab: #0b1a3a;
+    --manga-tone: rgba(29, 78, 216, .14);
+    --manga-scrim: rgba(229, 234, 243, .25);
+}
+html.lms-dark:not([class*="lms-theme-"]) {
+    --lms-primary: #60a5fa;           /* dark text on it 7.73:1 */
+    --lms-primary-d: #93c5fd;
+    --lms-accent: #38bdf8;
+    --lms-primary-rgb: 96, 165, 250;
+    --lms-on-primary: #060b17;
+    --lms-on-primary-muted: rgba(6, 11, 23, .8);
+    --lms-link: #93c5fd;              /* 9.40:1 on surface */
+    --lms-bg: #0a1020;
+    --lms-surface: #141c30;
+    --lms-sidebar-bg: #060b17;
+    --lms-sidebar-hover: #111a2e;
+    --lms-sidebar-active: #38bdf8;
+    --lms-text: #e6ecf7;              /* 14.30:1 */
+    --lms-text-muted: #a3adc2;        /* 7.52:1 */
+    --lms-border: #26314a;
+    --lms-header-bg: #060b17;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #56627d;
+    --manga-shadow: #000000;
+    --manga-pop: #38bdf8;
+    --manga-on-pop: #060b17;          /* 9.18:1 */
+    --manga-stripe: #38bdf8;
+    --manga-slab: #060b17;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Ember (crimson): deep red with orange sparks --- */
+html.lms-theme-crimson {
+    --lms-primary: #b91c1c;           /* white on it 6.47:1 */
+    --lms-primary-d: #991b1b;
+    --lms-accent: #fb923c;
+    --lms-primary-rgb: 185, 28, 28;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #991b1b;              /* 8.31:1 on white, 6.85:1 on page */
+    --lms-bg: #f1e7e5;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #2a0a0a;
+    --lms-sidebar-hover: #451212;
+    --lms-sidebar-active: #fb923c;
+    --lms-text: #1c1111;              /* 15.21:1 on page */
+    --lms-text-muted: #5c4a48;        /* 8.31:1 on white */
+    --lms-border: #e0cfcc;
+    --lms-header-bg: #2a0a0a;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #1c1111;
+    --manga-shadow: #2a0a0a;
+    --manga-pop: #fb923c;
+    --manga-on-pop: #000000;          /* 9.28:1 */
+    --manga-stripe: #fb923c;
+    --manga-slab: #2a0a0a;
+    --manga-tone: rgba(185, 28, 28, .14);
+    --manga-scrim: rgba(241, 231, 229, .25);
+}
+html.lms-dark.lms-theme-crimson {
+    --lms-primary: #f87171;           /* dark text on it 7.34:1 */
+    --lms-primary-d: #fca5a5;
+    --lms-accent: #fb923c;
+    --lms-primary-rgb: 248, 113, 113;
+    --lms-on-primary: #0c0404;
+    --lms-on-primary-muted: rgba(12, 4, 4, .8);
+    --lms-link: #fca5a5;              /* 9.62:1 on surface */
+    --lms-bg: #140808;
+    --lms-surface: #221010;
+    --lms-sidebar-bg: #0c0404;
+    --lms-sidebar-hover: #1f0c0c;
+    --lms-sidebar-active: #fb923c;
+    --lms-text: #f5e8e6;              /* 15.28:1 */
+    --lms-text-muted: #bca9a6;        /* 8.15:1 */
+    --lms-border: #3d1c1a;
+    --lms-header-bg: #0c0404;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #7a5552;
+    --manga-shadow: #000000;
+    --manga-pop: #fb923c;
+    --manga-on-pop: #0c0404;          /* 8.97:1 */
+    --manga-stripe: #fb923c;
+    --manga-slab: #0c0404;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Pine (forest): true green with sunlight yellow --- */
+html.lms-theme-forest {
+    --lms-primary: #166534;           /* white on it 7.13:1 */
+    --lms-primary-d: #14532d;
+    --lms-accent: #facc15;
+    --lms-primary-rgb: 22, 101, 52;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #166534;              /* 7.13:1 on white, 5.92:1 on page */
+    --lms-bg: #e4ece5;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #0a2014;
+    --lms-sidebar-hover: #12331f;
+    --lms-sidebar-active: #facc15;
+    --lms-text: #111c15;              /* 14.51:1 on page */
+    --lms-text-muted: #4b5a50;        /* 7.30:1 on white */
+    --lms-border: #c7d6ca;
+    --lms-header-bg: #0a2014;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #111c15;
+    --manga-shadow: #0a2014;
+    --manga-pop: #facc15;
+    --manga-on-pop: #000000;          /* 13.71:1 */
+    --manga-stripe: #facc15;
+    --manga-slab: #0a2014;
+    --manga-tone: rgba(22, 101, 52, .14);
+    --manga-scrim: rgba(228, 236, 229, .25);
+}
+html.lms-dark.lms-theme-forest {
+    --lms-primary: #4ade80;           /* dark text on it 11.41:1 */
+    --lms-primary-d: #86efac;
+    --lms-accent: #facc15;
+    --lms-primary-rgb: 74, 222, 128;
+    --lms-on-primary: #040b07;
+    --lms-on-primary-muted: rgba(4, 11, 7, .8);
+    --lms-link: #86efac;              /* 12.19:1 on surface */
+    --lms-bg: #07120b;
+    --lms-surface: #0f1f15;
+    --lms-sidebar-bg: #040b07;
+    --lms-sidebar-hover: #0d1c12;
+    --lms-sidebar-active: #facc15;
+    --lms-text: #e5f0e8;              /* 14.64:1 */
+    --lms-text-muted: #a1b3a6;        /* 7.75:1 */
+    --lms-border: #213a2a;
+    --lms-header-bg: #040b07;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #577363;
+    --manga-shadow: #000000;
+    --manga-pop: #facc15;
+    --manga-on-pop: #040b07;          /* 12.98:1 */
+    --manga-stripe: #facc15;
+    --manga-slab: #040b07;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Blossom (pink): raspberry and petal pink --- */
+html.lms-theme-pink {
+    --lms-primary: #be185d;           /* white on it 6.04:1 */
+    --lms-primary-d: #9d174d;
+    --lms-accent: #f9a8d4;
+    --lms-primary-rgb: 190, 24, 93;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #9d174d;              /* 7.88:1 on white, 6.65:1 on page */
+    --lms-bg: #f6e8ef;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #3b0a24;
+    --lms-sidebar-hover: #561235;
+    --lms-sidebar-active: #f9a8d4;
+    --lms-text: #25101b;              /* 15.15:1 on page */
+    --lms-text-muted: #5f4753;        /* 8.36:1 on white */
+    --lms-border: #ecd0de;
+    --lms-header-bg: #3b0a24;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #25101b;
+    --manga-shadow: #3b0a24;
+    --manga-pop: #f9a8d4;
+    --manga-on-pop: #000000;          /* 11.58:1 */
+    --manga-stripe: #f9a8d4;
+    --manga-slab: #3b0a24;
+    --manga-tone: rgba(190, 24, 93, .14);
+    --manga-scrim: rgba(246, 232, 239, .25);
+}
+html.lms-dark.lms-theme-pink {
+    --lms-primary: #f472b6;           /* dark text on it 7.65:1 */
+    --lms-primary-d: #f9a8d4;
+    --lms-accent: #f9a8d4;
+    --lms-primary-rgb: 244, 114, 182;
+    --lms-on-primary: #0c0409;
+    --lms-on-primary-muted: rgba(12, 4, 9, .8);
+    --lms-link: #f9a8d4;              /* 10.01:1 on surface */
+    --lms-bg: #14080e;
+    --lms-surface: #22101a;
+    --lms-sidebar-bg: #0c0409;
+    --lms-sidebar-hover: #1f0c16;
+    --lms-sidebar-active: #f9a8d4;
+    --lms-text: #f6e7ef;              /* 15.21:1 */
+    --lms-text-muted: #bba6b1;        /* 7.95:1 */
+    --lms-border: #3d1a2c;
+    --lms-header-bg: #0c0409;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #7a5468;
+    --manga-shadow: #000000;
+    --manga-pop: #f9a8d4;
+    --manga-on-pop: #0c0409;          /* 11.17:1 */
+    --manga-stripe: #f9a8d4;
+    --manga-slab: #0c0409;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Graphite (mono): pure ink and paper --- */
+html.lms-theme-mono {
+    --lms-primary: #27272a;           /* white on it 14.89:1 */
+    --lms-primary-d: #18181b;
+    --lms-accent: #e4e4e7;
+    --lms-primary-rgb: 39, 39, 42;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #27272a;              /* 14.89:1 on white, 12.28:1 on page */
+    --lms-bg: #e9e9eb;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #09090b;
+    --lms-sidebar-hover: #1f1f23;
+    --lms-sidebar-active: #e4e4e7;
+    --lms-text: #09090b;              /* 16.41:1 on page */
+    --lms-text-muted: #52525b;        /* 7.73:1 on white */
+    --lms-border: #d4d4d8;
+    --lms-header-bg: #09090b;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #09090b;
+    --manga-shadow: #09090b;
+    --manga-pop: #e4e4e7;
+    --manga-on-pop: #000000;          /* 16.55:1 */
+    --manga-stripe: #e4e4e7;
+    --manga-slab: #09090b;
+    --manga-tone: rgba(39, 39, 42, .14);
+    --manga-scrim: rgba(233, 233, 235, .25);
+}
+html.lms-dark.lms-theme-mono {
+    --lms-primary: #d4d4d8;           /* dark text on it 14.21:1 */
+    --lms-primary-d: #e4e4e7;
+    --lms-accent: #e4e4e7;
+    --lms-primary-rgb: 212, 212, 216;
+    --lms-on-primary: #000000;
+    --lms-on-primary-muted: rgba(0, 0, 0, .8);
+    --lms-link: #e4e4e7;              /* 14.36:1 on surface */
+    --lms-bg: #09090b;
+    --lms-surface: #151518;
+    --lms-sidebar-bg: #000000;
+    --lms-sidebar-hover: #18181b;
+    --lms-sidebar-active: #e4e4e7;
+    --lms-text: #ececee;              /* 15.45:1 */
+    --lms-text-muted: #a1a1aa;        /* 7.11:1 */
+    --lms-border: #2e2e33;
+    --lms-header-bg: #000000;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #5a5a61;
+    --manga-shadow: #000000;
+    --manga-pop: #e4e4e7;
+    --manga-on-pop: #000000;          /* 16.55:1 */
+    --manga-stripe: #e4e4e7;
+    --manga-slab: #000000;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Amethyst (purple): violet with orchid highlights --- */
+html.lms-theme-purple {
+    --lms-primary: #6d28d9;           /* white on it 7.10:1 */
+    --lms-primary-d: #5b21b6;
+    --lms-accent: #f0abfc;
+    --lms-primary-rgb: 109, 40, 217;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #5b21b6;              /* 8.98:1 on white, 7.45:1 on page */
+    --lms-bg: #ece8f5;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #1e0b3d;
+    --lms-sidebar-hover: #2e1460;
+    --lms-sidebar-active: #f0abfc;
+    --lms-text: #1a1030;              /* 15.01:1 on page */
+    --lms-text-muted: #544a66;        /* 8.24:1 on white */
+    --lms-border: #d8d0ea;
+    --lms-header-bg: #1e0b3d;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #1a1030;
+    --manga-shadow: #1e0b3d;
+    --manga-pop: #f0abfc;
+    --manga-on-pop: #000000;          /* 11.94:1 */
+    --manga-stripe: #f0abfc;
+    --manga-slab: #1e0b3d;
+    --manga-tone: rgba(109, 40, 217, .14);
+    --manga-scrim: rgba(236, 232, 245, .25);
+}
+html.lms-dark.lms-theme-purple {
+    --lms-primary: #a78bfa;           /* dark text on it 7.44:1 */
+    --lms-primary-d: #c4b5fd;
+    --lms-accent: #f0abfc;
+    --lms-primary-rgb: 167, 139, 250;
+    --lms-on-primary: #07050e;
+    --lms-on-primary-muted: rgba(7, 5, 14, .8);
+    --lms-link: #c4b5fd;              /* 9.73:1 on surface */
+    --lms-bg: #0e0a1a;
+    --lms-surface: #19132b;
+    --lms-sidebar-bg: #07050e;
+    --lms-sidebar-hover: #161027;
+    --lms-sidebar-active: #f0abfc;
+    --lms-text: #ece8f7;              /* 14.92:1 */
+    --lms-text-muted: #aea6c2;        /* 7.72:1 */
+    --lms-border: #2e2548;
+    --lms-header-bg: #07050e;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #625a7d;
+    --manga-shadow: #000000;
+    --manga-pop: #f0abfc;
+    --manga-on-pop: #07050e;          /* 11.51:1 */
+    --manga-stripe: #f0abfc;
+    --manga-slab: #07050e;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Lagoon (teal): deep teal and seafoam --- */
+html.lms-theme-teal {
+    --lms-primary: #0f766e;           /* white on it 5.47:1 */
+    --lms-primary-d: #115e59;
+    --lms-accent: #5eead4;
+    --lms-primary-rgb: 15, 118, 110;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #115e59;              /* 7.58:1 on white, 6.40:1 on page */
+    --lms-bg: #e3eeed;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #042f2e;
+    --lms-sidebar-hover: #0a4442;
+    --lms-sidebar-active: #5eead4;
+    --lms-text: #0c1f1e;              /* 14.40:1 on page */
+    --lms-text-muted: #475b5a;        /* 7.21:1 on white */
+    --lms-border: #c5dcda;
+    --lms-header-bg: #042f2e;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #0c1f1e;
+    --manga-shadow: #042f2e;
+    --manga-pop: #5eead4;
+    --manga-on-pop: #000000;          /* 14.20:1 */
+    --manga-stripe: #5eead4;
+    --manga-slab: #042f2e;
+    --manga-tone: rgba(15, 118, 110, .14);
+    --manga-scrim: rgba(227, 238, 237, .25);
+}
+html.lms-dark.lms-theme-teal {
+    --lms-primary: #2dd4bf;           /* dark text on it 10.68:1 */
+    --lms-primary-d: #5eead4;
+    --lms-accent: #5eead4;
+    --lms-primary-rgb: 45, 212, 191;
+    --lms-on-primary: #030b0a;
+    --lms-on-primary-muted: rgba(3, 11, 10, .8);
+    --lms-link: #5eead4;              /* 11.40:1 on surface */
+    --lms-bg: #061312;
+    --lms-surface: #0e201f;
+    --lms-sidebar-bg: #030b0a;
+    --lms-sidebar-hover: #0b1c1b;
+    --lms-sidebar-active: #5eead4;
+    --lms-text: #e3f1ef;              /* 14.53:1 */
+    --lms-text-muted: #9fb8b5;        /* 8.03:1 */
+    --lms-border: #1e3a38;
+    --lms-header-bg: #030b0a;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #537472;
+    --manga-shadow: #000000;
+    --manga-pop: #5eead4;
+    --manga-on-pop: #030b0a;          /* 13.44:1 */
+    --manga-stripe: #5eead4;
+    --manga-slab: #030b0a;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Sunstone (amber): burnt amber and gold --- */
+html.lms-theme-amber {
+    --lms-primary: #a14a07;           /* white on it 6.00:1 */
+    --lms-primary-d: #8a3c06;
+    --lms-accent: #fbbf24;
+    --lms-primary-rgb: 161, 74, 7;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #8a3c06;              /* 7.69:1 on white, 6.60:1 on page */
+    --lms-bg: #f3ede2;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #2b1702;
+    --lms-sidebar-hover: #45260a;
+    --lms-sidebar-active: #fbbf24;
+    --lms-text: #1f1606;              /* 15.33:1 on page */
+    --lms-text-muted: #5c513f;        /* 7.77:1 on white */
+    --lms-border: #e5d9c2;
+    --lms-header-bg: #2b1702;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #1f1606;
+    --manga-shadow: #2b1702;
+    --manga-pop: #fbbf24;
+    --manga-on-pop: #000000;          /* 12.58:1 */
+    --manga-stripe: #fbbf24;
+    --manga-slab: #2b1702;
+    --manga-tone: rgba(161, 74, 7, .14);
+    --manga-scrim: rgba(243, 237, 226, .25);
+}
+html.lms-dark.lms-theme-amber {
+    --lms-primary: #fbbf24;           /* dark text on it 12.05:1 */
+    --lms-primary-d: #fcd34d;
+    --lms-accent: #fbbf24;
+    --lms-primary-rgb: 251, 191, 36;
+    --lms-on-primary: #0a0702;
+    --lms-on-primary-muted: rgba(10, 7, 2, .8);
+    --lms-link: #fcd34d;              /* 12.29:1 on surface */
+    --lms-bg: #120d04;
+    --lms-surface: #1f170a;
+    --lms-sidebar-bg: #0a0702;
+    --lms-sidebar-hover: #1c1409;
+    --lms-sidebar-active: #fbbf24;
+    --lms-text: #f4eee2;              /* 15.33:1 */
+    --lms-text-muted: #b8ad98;        /* 7.99:1 */
+    --lms-border: #3a2d17;
+    --lms-header-bg: #0a0702;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #75684f;
+    --manga-shadow: #000000;
+    --manga-pop: #fbbf24;
+    --manga-on-pop: #0a0702;          /* 12.05:1 */
+    --manga-stripe: #fbbf24;
+    --manga-slab: #0a0702;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Tide (ocean): harbour blue and spray --- */
+html.lms-theme-ocean {
+    --lms-primary: #0369a1;           /* white on it 5.93:1 */
+    --lms-primary-d: #075985;
+    --lms-accent: #7dd3fc;
+    --lms-primary-rgb: 3, 105, 161;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #075985;              /* 7.56:1 on white, 6.37:1 on page */
+    --lms-bg: #e3edf3;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #082f49;
+    --lms-sidebar-hover: #0c4a6e;
+    --lms-sidebar-active: #7dd3fc;
+    --lms-text: #0a1d2a;              /* 14.46:1 on page */
+    --lms-text-muted: #475a68;        /* 7.17:1 on white */
+    --lms-border: #c6d9e6;
+    --lms-header-bg: #082f49;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #0a1d2a;
+    --manga-shadow: #082f49;
+    --manga-pop: #7dd3fc;
+    --manga-on-pop: #000000;          /* 12.60:1 */
+    --manga-stripe: #7dd3fc;
+    --manga-slab: #082f49;
+    --manga-tone: rgba(3, 105, 161, .14);
+    --manga-scrim: rgba(227, 237, 243, .25);
+}
+html.lms-dark.lms-theme-ocean {
+    --lms-primary: #38bdf8;           /* dark text on it 9.33:1 */
+    --lms-primary-d: #7dd3fc;
+    --lms-accent: #7dd3fc;
+    --lms-primary-rgb: 56, 189, 248;
+    --lms-on-primary: #030910;
+    --lms-on-primary-muted: rgba(3, 9, 16, .8);
+    --lms-link: #7dd3fc;              /* 10.44:1 on surface */
+    --lms-bg: #06101a;
+    --lms-surface: #0e1b28;
+    --lms-sidebar-bg: #030910;
+    --lms-sidebar-hover: #0b1824;
+    --lms-sidebar-active: #7dd3fc;
+    --lms-text: #e3eef6;              /* 14.78:1 */
+    --lms-text-muted: #9fb3c3;        /* 8.05:1 */
+    --lms-border: #1d3447;
+    --lms-header-bg: #030910;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #52697d;
+    --manga-shadow: #000000;
+    --manga-pop: #7dd3fc;
+    --manga-on-pop: #030910;          /* 11.99:1 */
+    --manga-stripe: #7dd3fc;
+    --manga-slab: #030910;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Lichen (sage): weathered olive and pale moss --- */
+html.lms-theme-sage {
+    --lms-primary: #4f5f33;           /* white on it 6.96:1 */
+    --lms-primary-d: #404d29;
+    --lms-accent: #d9e0a3;
+    --lms-primary-rgb: 79, 95, 51;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #404d29;              /* 9.08:1 on white, 7.62:1 on page */
+    --lms-bg: #eaece3;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #1e2615;
+    --lms-sidebar-hover: #2e3a20;
+    --lms-sidebar-active: #d9e0a3;
+    --lms-text: #1a1e13;              /* 14.21:1 on page */
+    --lms-text-muted: #4e5443;        /* 7.86:1 on white */
+    --lms-border: #d3d8c6;
+    --lms-header-bg: #1e2615;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #1a1e13;
+    --manga-shadow: #1e2615;
+    --manga-pop: #d9e0a3;
+    --manga-on-pop: #000000;          /* 15.14:1 */
+    --manga-stripe: #d9e0a3;
+    --manga-slab: #1e2615;
+    --manga-tone: rgba(79, 95, 51, .14);
+    --manga-scrim: rgba(234, 236, 227, .25);
+}
+html.lms-dark.lms-theme-sage {
+    --lms-primary: #a3b86c;           /* dark text on it 9.21:1 */
+    --lms-primary-d: #c5d49b;
+    --lms-accent: #d9e0a3;
+    --lms-primary-rgb: 163, 184, 108;
+    --lms-on-primary: #070805;
+    --lms-on-primary-muted: rgba(7, 8, 5, .8);
+    --lms-link: #c5d49b;              /* 10.93:1 on surface */
+    --lms-bg: #0d0f09;
+    --lms-surface: #181c12;
+    --lms-sidebar-bg: #070805;
+    --lms-sidebar-hover: #151a0f;
+    --lms-sidebar-active: #d9e0a3;
+    --lms-text: #ebeee3;              /* 14.73:1 */
+    --lms-text-muted: #adb39f;        /* 8.01:1 */
+    --lms-border: #2f3623;
+    --lms-header-bg: #070805;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #6a735a;
+    --manga-shadow: #000000;
+    --manga-pop: #d9e0a3;
+    --manga-on-pop: #070805;          /* 14.48:1 */
+    --manga-stripe: #d9e0a3;
+    --manga-slab: #070805;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Garnet (rose): dark garnet and coral pink --- */
+html.lms-theme-rose {
+    --lms-primary: #9f1239;           /* white on it 8.02:1 */
+    --lms-primary-d: #881337;
+    --lms-accent: #fda4af;
+    --lms-primary-rgb: 159, 18, 57;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #881337;              /* 9.57:1 on white, 7.89:1 on page */
+    --lms-bg: #f3e6ea;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #2d0614;
+    --lms-sidebar-hover: #4a0d22;
+    --lms-sidebar-active: #fda4af;
+    --lms-text: #220f16;              /* 15.09:1 on page */
+    --lms-text-muted: #5e4851;        /* 8.33:1 on white */
+    --lms-border: #e8cfd7;
+    --lms-header-bg: #2d0614;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #220f16;
+    --manga-shadow: #2d0614;
+    --manga-pop: #fda4af;
+    --manga-on-pop: #000000;          /* 11.11:1 */
+    --manga-stripe: #fda4af;
+    --manga-slab: #2d0614;
+    --manga-tone: rgba(159, 18, 57, .14);
+    --manga-scrim: rgba(243, 230, 234, .25);
+}
+html.lms-dark.lms-theme-rose {
+    --lms-primary: #fb7185;           /* dark text on it 7.57:1 */
+    --lms-primary-d: #fda4af;
+    --lms-accent: #fda4af;
+    --lms-primary-rgb: 251, 113, 133;
+    --lms-on-primary: #0c0305;
+    --lms-on-primary-muted: rgba(12, 3, 5, .8);
+    --lms-link: #fda4af;              /* 9.74:1 on surface */
+    --lms-bg: #140609;
+    --lms-surface: #220e13;
+    --lms-sidebar-bg: #0c0305;
+    --lms-sidebar-hover: #1f0b10;
+    --lms-sidebar-active: #fda4af;
+    --lms-text: #f6e6ea;              /* 15.28:1 */
+    --lms-text-muted: #bca5ac;        /* 7.99:1 */
+    --lms-border: #3d1a23;
+    --lms-header-bg: #0c0305;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #7a5560;
+    --manga-shadow: #000000;
+    --manga-pop: #fda4af;
+    --manga-on-pop: #0c0305;          /* 10.77:1 */
+    --manga-stripe: #fda4af;
+    --manga-slab: #0c0305;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Twilight (dusk): indigo evening, lavender glow --- */
+html.lms-theme-dusk {
+    --lms-primary: #4f46e5;           /* white on it 6.29:1 */
+    --lms-primary-d: #4338ca;
+    --lms-accent: #c4b5fd;
+    --lms-primary-rgb: 79, 70, 229;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #4338ca;              /* 7.90:1 on white, 6.49:1 on page */
+    --lms-bg: #e8e8f2;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #1a1b3a;
+    --lms-sidebar-hover: #282a55;
+    --lms-sidebar-active: #c4b5fd;
+    --lms-text: #15162b;              /* 14.60:1 on page */
+    --lms-text-muted: #50526a;        /* 7.62:1 on white */
+    --lms-border: #d3d4e6;
+    --lms-header-bg: #1a1b3a;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #15162b;
+    --manga-shadow: #1a1b3a;
+    --manga-pop: #c4b5fd;
+    --manga-on-pop: #000000;          /* 11.38:1 */
+    --manga-stripe: #c4b5fd;
+    --manga-slab: #1a1b3a;
+    --manga-tone: rgba(79, 70, 229, .14);
+    --manga-scrim: rgba(232, 232, 242, .25);
+}
+html.lms-dark.lms-theme-dusk {
+    --lms-primary: #818cf8;           /* dark text on it 6.77:1 */
+    --lms-primary-d: #a5b4fc;
+    --lms-accent: #c4b5fd;
+    --lms-primary-rgb: 129, 140, 248;
+    --lms-on-primary: #06060e;
+    --lms-on-primary-muted: rgba(6, 6, 14, .8);
+    --lms-link: #a5b4fc;              /* 8.84:1 on surface */
+    --lms-bg: #0c0c1a;
+    --lms-surface: #16172b;
+    --lms-sidebar-bg: #06060e;
+    --lms-sidebar-hover: #131426;
+    --lms-sidebar-active: #c4b5fd;
+    --lms-text: #e8e8f5;              /* 14.51:1 */
+    --lms-text-muted: #a8a9c2;        /* 7.65:1 */
+    --lms-border: #2a2b48;
+    --lms-header-bg: #06060e;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #5d5f80;
+    --manga-shadow: #000000;
+    --manga-pop: #c4b5fd;
+    --manga-on-pop: #06060e;          /* 10.94:1 */
+    --manga-stripe: #c4b5fd;
+    --manga-slab: #06060e;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
+}
+
+/* --- Verdant (verdant): moss and emerald over stone --- */
+html.lms-theme-verdant {
+    --lms-primary: #0f7a52;           /* white on it 5.35:1 */
+    --lms-primary-d: #0a6242;
+    --lms-accent: #a3e635;
+    --lms-primary-rgb: 15, 122, 82;
+    --lms-on-primary: #ffffff;
+    --lms-on-primary-muted: rgba(255,255,255,.92);
+    --lms-link: #0a6242;              /* 7.40:1 on white, 6.11:1 on page */
+    --lms-bg: #e6ebe3;
+    --lms-surface: #ffffff;
+    --lms-sidebar-bg: #0f2a1f;
+    --lms-sidebar-hover: #173b2c;
+    --lms-sidebar-active: #a3e635;
+    --lms-text: #1c1917;              /* 14.45:1 on page */
+    --lms-text-muted: #57534e;        /* 7.63:1 on white */
+    --lms-border: #cbd3c8;
+    --lms-header-bg: #0f2a1f;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #1c1917;
+    --manga-shadow: #0f2a1f;
+    --manga-pop: #a3e635;
+    --manga-on-pop: #000000;          /* 13.93:1 */
+    --manga-stripe: #a3e635;
+    --manga-slab: #0f2a1f;
+    --manga-tone: rgba(15, 122, 82, .14);
+    --manga-scrim: rgba(230, 235, 227, .25);
+}
+html.lms-dark.lms-theme-verdant {
+    --lms-primary: #4ade80;           /* dark text on it 11.01:1 */
+    --lms-primary-d: #6ee7b7;
+    --lms-accent: #a3e635;
+    --lms-primary-rgb: 74, 222, 128;
+    --lms-on-primary: #07110d;
+    --lms-on-primary-muted: rgba(7, 17, 13, .8);
+    --lms-link: #6ee7b7;              /* 10.56:1 on surface */
+    --lms-bg: #0c1612;
+    --lms-surface: #16241d;
+    --lms-sidebar-bg: #07110d;
+    --lms-sidebar-hover: #12251c;
+    --lms-sidebar-active: #a3e635;
+    --lms-text: #e7efe9;              /* 13.74:1 */
+    --lms-text-muted: #a8b3ad;        /* 7.45:1 */
+    --lms-border: #2a3d33;
+    --lms-header-bg: #07110d;
+    --lms-header-text: #ffffff;
+
+    --manga-ink: #5f7a6b;
+    --manga-shadow: #000000;
+    --manga-pop: #a3e635;
+    --manga-on-pop: #07110d;          /* 12.72:1 */
+    --manga-stripe: #a3e635;
+    --manga-slab: #07110d;
+    --manga-tone: rgba(255, 255, 255, .05);
+    --manga-scrim: rgba(0, 0, 0, .35);
 }

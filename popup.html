@@ -9,7 +9,7 @@
   <header class="header" id="popupHeader">
     <div class="header-glow"></div>
     <h1>Bahria LMS Redesign</h1>
-    <p>Modern UI for your learning portal</p>
+    <p>Your learning portal, drawn in ink</p>
   </header>
 
   <section class="section">
@@ -25,15 +25,49 @@
         <span class="slider" aria-hidden="true"></span>
       </label>
     </div>
+
+    <div class="toggle-row toggle-row--spaced">
+      <div class="toggle-copy">
+        <label class="toggle-label" for="animeToggle">Anime Style</label>
+        <p class="toggle-desc">Inked panels, glass and wallpapers</p>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="animeToggle">
+        <span class="slider" aria-hidden="true"></span>
+      </label>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section class="section" id="wallpaperSection">
+    <h2 class="section-title" id="wallpaperTitle">Wallpaper</h2>
+    <div class="wallpaper-panel">
+      <span class="wallpaper-preview" id="wallpaperPreview" role="img" aria-label="Current wallpaper"></span>
+      <div class="wallpaper-side">
+        <p class="wallpaper-state" id="wallpaperState">Built-in wallpaper</p>
+        <!-- The input is the real control; the button just gives it a styled
+             face. Label + click keeps it keyboard reachable. -->
+        <input type="file" id="wallpaperInput" class="visually-hidden"
+               accept="image/svg+xml,image/jpeg,image/png,.svg,.jpg,.jpeg,.png">
+        <div class="wallpaper-actions">
+          <button type="button" class="mini-btn mini-btn--primary" id="wallpaperUpload">Upload image</button>
+          <button type="button" class="mini-btn" id="wallpaperDefault">Built-in</button>
+          <button type="button" class="mini-btn" id="wallpaperNone">None</button>
+        </div>
+      </div>
+    </div>
+    <p class="subsection-desc" id="wallpaperNote">SVG, JPEG or PNG, up to 4 MB. Stored on this device.</p>
+    <p class="subsection-desc" id="wallpaperHint" hidden>Turn on Anime Style to show wallpapers.</p>
   </section>
 
   <div class="divider"></div>
 
   <section class="section">
-    <h2 class="section-title">Color Theme</h2>
+    <h2 class="section-title" id="themeTitle">Theme</h2>
     <!-- Populated from the THEMES table in popup.js so the swatch colours and
          the theme list can never drift apart. -->
-    <div class="theme-grid" id="themeGrid" role="radiogroup" aria-label="Color theme"></div>
+    <div class="theme-grid" id="themeGrid" role="radiogroup" aria-labelledby="themeTitle"></div>
   </section>
 
   <p class="status" id="status" role="status" hidden></p>

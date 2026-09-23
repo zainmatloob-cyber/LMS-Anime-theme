@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Bahria LMS Redesign",
-  "version": "2.1",
-  "description": "Modern UI redesign for Bahria University LMS and CMS — clean layout, dark mode, and 12 color themes.",
+  "version": "3.3",
+  "description": "Modern UI redesign for Bahria University LMS and CMS — clean layout, anime style, glass panels over your own wallpaper, dark mode and 13 full-palette themes.",
   "action": {
     "default_popup": "popup.html",
     "default_title": "LMS Redesign Settings",
@@ -21,14 +21,14 @@
   "content_scripts": [
     {
       "matches": ["*://lms.bahria.edu.pk/*"],
-      "css": ["css/theme.css", "css/mystyle.css"],
+      "css": ["css/theme.css", "css/mystyle.css", "css/anime.css"],
       "js": ["js/theme-core.js", "js/content.js"],
       "run_at": "document_start",
       "all_frames": false
     },
     {
       "matches": ["*://cms.bahria.edu.pk/*"],
-      "css": ["css/theme.css", "css/cms-style.css"],
+      "css": ["css/theme.css", "css/cms-style.css", "css/anime.css"],
       "js": ["js/theme-core.js", "js/cms-content.js"],
       "run_at": "document_start",
       "all_frames": false
@@ -36,7 +36,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["fonts/*.woff2"],
+      "resources": ["fonts/*.woff2", "images/wallpapers/*.svg"],
       "matches": ["*://lms.bahria.edu.pk/*", "*://cms.bahria.edu.pk/*"]
     }
   ]

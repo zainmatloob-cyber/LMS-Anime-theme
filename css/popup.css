@@ -324,3 +324,202 @@ body.dark .theme-swatch[aria-checked="true"] .swatch-name {
         animation-duration: .01ms !important;
     }
 }
+
+/* ---------- Manga themes ---------- */
+
+@font-face {
+    font-family: 'LMS Manga Display';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/dela-gothic-one-latin.woff2') format('woff2');
+}
+
+.subsection-desc {
+    margin: 2px 0 10px;
+    font-size: 11px;
+    color: var(--popup-text-muted);
+}
+
+/* Manga swatches are squares with an ink outline and a screentone corner,
+   so they read as a different kind of theme at a glance. */
+.swatch-circle.is-manga {
+    border-radius: 3px;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+}
+
+.swatch-circle.is-manga::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, .55) 1px, transparent 1.3px) 0 0 / 4px 4px;
+    -webkit-mask-image: linear-gradient(135deg, transparent 45%, #000 100%);
+            mask-image: linear-gradient(135deg, transparent 45%, #000 100%);
+}
+
+body.dark .swatch-circle.is-manga {
+    border-color: #e6e6e6;
+}
+
+.theme-swatch:hover .swatch-circle.is-manga {
+    transform: translate(-1px, -1px);
+    box-shadow: 4px 4px 0 #000;
+}
+
+/* With a manga theme active, the header becomes the same inked slab the
+   LMS page title uses. */
+body.manga .header {
+    text-align: left;
+    background:
+        linear-gradient(90deg, #000 30%, transparent 80%),
+        repeating-conic-gradient(from 0deg at 108% 50%,
+            rgba(255, 255, 255, .16) 0deg .8deg,
+            transparent .8deg 5deg),
+        #000;
+    border-left: 8px solid var(--popup-pop);
+    border-bottom: 3px solid var(--popup-pop);
+}
+
+body.manga .header-glow {
+    display: none;
+}
+
+body.manga .header h1 {
+    font-family: 'LMS Manga Display', Impact, 'Arial Black', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    letter-spacing: .01em;
+}
+
+/* ---------- Anime style + wallpapers ---------- */
+
+.toggle-row--spaced {
+    margin-top: 14px;
+}
+
+.wallpaper-panel {
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    gap: 12px;
+    align-items: center;
+    transition: opacity var(--popup-dur) var(--popup-ease);
+}
+
+/* The wallpaper choice stays editable while the manga layer is off; it is
+   kept for when it comes back on. Dimming just says it isn't showing. */
+.is-inactive .wallpaper-panel {
+    opacity: .5;
+}
+
+.wallpaper-preview {
+    display: block;
+    aspect-ratio: 16 / 10;
+    border: 2px solid #000;
+    border-radius: 4px;
+    background: center / cover no-repeat;
+}
+
+body.dark .wallpaper-preview {
+    border-color: #475569;
+}
+
+/* No wallpaper: show the plain screentone the page falls back to. */
+.wallpaper-preview.is-empty {
+    background:
+        radial-gradient(circle, rgba(100, 116, 139, .45) 1px, transparent 1.4px) 0 0 / 6px 6px,
+        var(--popup-surface);
+}
+
+.wallpaper-side {
+    min-width: 0;
+}
+
+.wallpaper-state {
+    margin: 0 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--popup-text);
+}
+
+.wallpaper-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mini-btn {
+    padding: 6px 10px;
+    border: 1px solid var(--popup-border);
+    border-radius: 6px;
+    background: var(--popup-surface);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--popup-text);
+    cursor: pointer;
+    transition: background-color var(--popup-dur) var(--popup-ease),
+                border-color var(--popup-dur) var(--popup-ease);
+}
+
+.mini-btn:hover {
+    background: var(--popup-hover);
+}
+
+.mini-btn:focus-visible {
+    outline: none;
+    border-color: var(--popup-primary);
+    box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .3);
+}
+
+.mini-btn--primary {
+    border-color: transparent;
+    background: var(--popup-primary);
+    color: #fff;
+}
+
+.mini-btn--primary:hover {
+    background: var(--popup-accent);
+}
+
+.mini-btn.is-active {
+    border-color: var(--popup-primary);
+    color: var(--popup-primary);
+}
+
+body.dark .mini-btn.is-active {
+    border-color: var(--popup-text);
+    color: var(--popup-text);
+}
+
+/* Keeps the file input operable by keyboard and assistive tech while the
+   styled button stands in for it visually. */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+#wallpaperNote {
+    margin: 10px 0 0;
+    word-break: break-word;
+}
+
+#wallpaperNote.is-error {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+body.dark #wallpaperNote.is-error {
+    color: #fca5a5;
+}
+
+#wallpaperHint {
+    margin: 10px 0 0;
+}
