@@ -290,6 +290,19 @@ ul.sidebar-menu li a span {
     font-size: 14px !important;
 }
 
+/* Collapsed sidebar hover popup label (AdminLTE fly-out tooltip) */
+body.sidebar-collapse .sidebar-menu > li:hover > a > span,
+body.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu {
+    background: var(--lms-sidebar-bg) !important;
+    color: var(--lms-header-text) !important;
+    border: 1px solid var(--lms-border) !important;
+    border-radius: 0 var(--lms-radius-sm) var(--lms-radius-sm) 0 !important;
+    box-shadow: var(--lms-shadow-md) !important;
+}
+body.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    padding: 10px 14px !important;
+}
+
 /* Sidebar user panel */
 .sidebar .user-panel {
     border-bottom: 1px solid var(--lms-border) !important;
