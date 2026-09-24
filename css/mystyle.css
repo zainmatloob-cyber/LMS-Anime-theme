@@ -634,6 +634,7 @@ select#courseId.form-control {
 }
 
 .lms-custom-select-option:hover,
+.lms-custom-select-option.is-active,
 .lms-custom-select-option.is-selected {
     background: rgba(var(--lms-primary-rgb), 0.16) !important;
     color: var(--lms-text) !important;
