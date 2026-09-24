@@ -166,6 +166,7 @@ a:hover {
     border-right: 1px solid rgba(255,255,255,.08) !important;
     font-weight: 700 !important;
     letter-spacing: .3px !important;
+    overflow: hidden !important;
 }
 .main-header .logo:hover,
 .skin-yellow .main-header .logo:hover,
@@ -175,6 +176,8 @@ a:hover {
 
 .main-header .logo img {
     filter: brightness(1.1);
+    max-height: calc(var(--lms-header-h) - 12px) !important;
+    width: auto !important;
 }
 
 /* Header title */
@@ -1628,6 +1631,16 @@ html.lms-dark .box-header .box-title {
         justify-content: center !important;
         gap: 8px !important;
         padding: 0 12px !important;
+    }
+
+    .main-header .logo .logo-lg,
+    .main-header .logo .logo-mini {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        height: 100% !important;
+        line-height: normal !important;
     }
 
     /* Navbar controls centre on the taller header instead of hanging from the
