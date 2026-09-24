@@ -274,6 +274,18 @@ a:hover {
     color: var(--lms-primary) !important;
 }
 
+.sidebar-menu > li.active > a:hover,
+.sidebar-menu > li.li-highlight > a:hover,
+.skin-yellow .sidebar-menu > li.active > a:hover,
+.skin-yellow-light .sidebar-menu > li.active > a:hover {
+    color: #ffffff !important;
+}
+
+.sidebar-menu > li.active > a:hover > i,
+.sidebar-menu > li.li-highlight > a:hover > i {
+    color: var(--lms-primary) !important;
+}
+
 /* Highlighted sidebar item override */
 .li-highlight,
 .li-highlight a {

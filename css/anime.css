@@ -347,12 +347,15 @@ html.lms-manga .sidebar-menu > li > a::after {
 /* Active item is a highlighter stroke. */
 html.lms-manga .sidebar-menu > li.active > a,
 html.lms-manga .sidebar-menu > li.li-highlight > a,
-html.lms-manga .sidebar-menu > li.li-highlight > a > span,
 html.lms-manga aside#sideBar .list-group-item.active,
 html.lms-manga #sideMenuList > a.list-group-item.active {
     background: var(--manga-pop) !important;
     color: var(--manga-on-pop) !important;
     font-weight: 700 !important;
+}
+html.lms-manga .sidebar-menu > li > a > span {
+    background: transparent !important;
+    background-color: transparent !important;
 }
 html.lms-manga .sidebar-menu > li.li-highlight {
     background: transparent !important;
@@ -363,6 +366,21 @@ html.lms-manga .sidebar-menu > li.li-highlight > a > i,
 html.lms-manga aside#sideBar .list-group-item.active .fa,
 html.lms-manga #sideMenuList > a.list-group-item.active .fa {
     color: var(--manga-on-pop) !important;
+}
+
+html.lms-manga .sidebar-menu > li.active > a:hover,
+html.lms-manga .sidebar-menu > li.li-highlight > a:hover,
+html.lms-manga aside#sideBar .list-group-item.active:hover,
+html.lms-manga #sideMenuList > a.list-group-item.active:hover {
+    color: #ffffff !important;
+}
+
+html.lms-manga .sidebar-menu > li.active > a:hover > i,
+html.lms-manga .sidebar-menu > li.li-highlight > a:hover > i,
+html.lms-manga aside#sideBar .list-group-item.active:hover .fa,
+html.lms-manga aside#sideBar .list-group-item.active:hover .fas,
+html.lms-manga #sideMenuList > a.list-group-item.active:hover .fa {
+    color: var(--manga-stripe) !important;
 }
 
 /* Slanted cut on the right. Skipped when the LMS sidebar is collapsed,
