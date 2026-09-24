@@ -1633,14 +1633,24 @@ html.lms-dark .box-header .box-title {
         padding: 0 12px !important;
     }
 
-    .main-header .logo .logo-lg,
-    .main-header .logo .logo-mini {
+    /* AdminLTE toggles .logo-mini vs .logo-lg depending on sidebar state.
+       Ensure both sub-containers format as flex blocks without overriding display:none. */
+    .main-header .logo .logo-lg:not([style*="display: none"]),
+    .main-header .logo .logo-mini:not([style*="display: none"]) {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
         gap: 6px !important;
         height: 100% !important;
         line-height: normal !important;
+    }
+
+    body:not(.sidebar-collapse) .main-header .logo .logo-mini {
+        display: none !important;
+    }
+
+    body.sidebar-collapse .main-header .logo .logo-lg {
+        display: none !important;
     }
 
     /* Navbar controls centre on the taller header instead of hanging from the
