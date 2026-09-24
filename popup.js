@@ -11,7 +11,7 @@
      theme means adding one row plus the matching block in css/theme.css. */
   var THEMES = [
     { id: 'blue',    name: 'Midnight',  from: '#1d4ed8', to: '#38bdf8', rgb: '29, 78, 216' },
-    { id: 'crimson', name: 'Ember',     from: '#b91c1c', to: '#fb923c', rgb: '185, 28, 28' },
+    { id: 'crimson', name: 'Ember',     from: '#c2321c', to: '#fb923c', rgb: '194, 50, 28' },
     { id: 'forest',  name: 'Pine',      from: '#166534', to: '#facc15', rgb: '22, 101, 52' },
     { id: 'pink',    name: 'Blossom',   from: '#be185d', to: '#f9a8d4', rgb: '190, 24, 93' },
     { id: 'mono',    name: 'Graphite',  from: '#27272a', to: '#e4e4e7', rgb: '39, 39, 42' },
