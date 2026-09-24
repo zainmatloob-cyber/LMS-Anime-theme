@@ -166,6 +166,7 @@ a:hover {
     border-right: 1px solid rgba(255,255,255,.08) !important;
     font-weight: 700 !important;
     letter-spacing: .3px !important;
+    overflow: hidden !important;
 }
 .main-header .logo:hover,
 .skin-yellow .main-header .logo:hover,
@@ -175,6 +176,8 @@ a:hover {
 
 .main-header .logo img {
     filter: brightness(1.1);
+    max-height: calc(var(--lms-header-h) - 12px) !important;
+    width: auto !important;
 }
 
 /* Header title */
@@ -271,6 +274,18 @@ a:hover {
     color: var(--lms-primary) !important;
 }
 
+.sidebar-menu > li.active > a:hover,
+.sidebar-menu > li.li-highlight > a:hover,
+.skin-yellow .sidebar-menu > li.active > a:hover,
+.skin-yellow-light .sidebar-menu > li.active > a:hover {
+    color: #ffffff !important;
+}
+
+.sidebar-menu > li.active > a:hover > i,
+.sidebar-menu > li.li-highlight > a:hover > i {
+    color: var(--lms-primary) !important;
+}
+
 /* Highlighted sidebar item override */
 .li-highlight,
 .li-highlight a {
@@ -285,6 +300,37 @@ a:hover {
 
 ul.sidebar-menu li a span {
     font-size: 14px !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    color: inherit !important;
+}
+
+/* Collapsed sidebar hover popup label (AdminLTE fly-out tooltip) */
+body.sidebar-collapse .sidebar-menu > li:hover > a > span,
+body.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.sidebar-collapse .sidebar-menu > li:hover > a > span,
+.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > .treeview-menu,
+.sidebar-menu > li.sidebar-collapse:hover > a > span,
+.sidebar-menu li.treeview:hover > a > span {
+    background: var(--lms-sidebar-bg) !important;
+    background-color: var(--lms-sidebar-bg) !important;
+    color: var(--lms-header-text) !important;
+}
+
+body.sidebar-collapse .sidebar-menu > li:hover > a > span,
+.sidebar-collapse .sidebar-menu > li:hover > a > span,
+.sidebar-mini.sidebar-collapse .sidebar-menu > li:hover > a > span {
+    top: 0 !important;
+    margin-left: 0 !important;
+    padding: 12px 16px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    border: 1px solid var(--lms-border) !important;
+    border-radius: 0 var(--lms-radius-sm) var(--lms-radius-sm) 0 !important;
+    box-shadow: var(--lms-shadow-md) !important;
 }
 
 /* Sidebar user panel */
@@ -634,6 +680,7 @@ select#courseId.form-control {
 }
 
 .lms-custom-select-option:hover,
+.lms-custom-select-option.is-active,
 .lms-custom-select-option.is-selected {
     background: rgba(var(--lms-primary-rgb), 0.16) !important;
     color: var(--lms-text) !important;
@@ -1627,6 +1674,26 @@ html.lms-dark .box-header .box-title {
         justify-content: center !important;
         gap: 8px !important;
         padding: 0 12px !important;
+    }
+
+    /* AdminLTE toggles .logo-mini vs .logo-lg depending on sidebar state.
+       Ensure both sub-containers format as flex blocks without overriding display:none. */
+    .main-header .logo .logo-lg:not([style*="display: none"]),
+    .main-header .logo .logo-mini:not([style*="display: none"]) {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        height: 100% !important;
+        line-height: normal !important;
+    }
+
+    body:not(.sidebar-collapse) .main-header .logo .logo-mini {
+        display: none !important;
+    }
+
+    body.sidebar-collapse .main-header .logo .logo-lg {
+        display: none !important;
     }
 
     /* Navbar controls centre on the taller header instead of hanging from the

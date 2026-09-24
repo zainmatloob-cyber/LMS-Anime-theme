@@ -323,12 +323,45 @@
   });
 
   /* ============================================================
+     Sidebar Active State Fix
+     LMS server HTML hardcodes `class="active"` on the Dashboard item
+     even when viewing course pages (which add `class="li-highlight"` to
+     the selected course link). We strip `active` from Dashboard when
+     another menu item is highlighted/active.
+     ============================================================ */
+
+  function fixSidebarActiveState() {
+    var menu = document.querySelector('.sidebar-menu');
+    if (!menu) return;
+
+    var items = menu.querySelectorAll(':scope > li');
+    if (!items || items.length <= 1) return;
+
+    var hasHighlightedCourse = false;
+    for (var i = 1; i < items.length; i++) {
+      var li = items[i];
+      if (li.classList.contains('li-highlight') || li.classList.contains('active')) {
+        hasHighlightedCourse = true;
+        break;
+      }
+    }
+
+    if (hasHighlightedCourse) {
+      var dashboardLi = items[0];
+      if (dashboardLi) {
+        dashboardLi.classList.remove('active', 'li-highlight');
+      }
+    }
+  }
+
+  /* ============================================================
      Wiring
      ============================================================ */
 
   function refresh() {
     applyAvatar();
     initThemedSelects();
+    fixSidebarActiveState();
   }
 
   Theme.onChange(applyAvatar);
