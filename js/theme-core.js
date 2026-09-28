@@ -9,6 +9,9 @@
      animeMode  boolean, default true - manga layer on every theme
      wallpaper  'default' | 'custom' | 'none', default 'default'
 
+   Glass strength and blur are not settings: they come from --glass-alpha
+   and --glass-blur in css/theme.css.
+
    An uploaded wallpaper is far too big for chrome.storage.sync (8 KB per
    item), so the image itself lives in chrome.storage.local under
    wallpaperImage, with wallpaperTone recording whether it is light or dark.

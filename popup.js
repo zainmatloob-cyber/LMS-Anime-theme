@@ -47,13 +47,6 @@
   var MAX_IMAGE_WIDTH = 2560;
   var JPEG_QUALITY = 0.85;
 
-  /* Glass sliders. `glass` is a transparency step away from the theme's own
-     strength, so light and dark keep their different bases (see
-     js/theme-core.js). Measured across themes, modes and wallpapers, muted
-     text holds 4.5:1 up to 40% and fails from 50%, so the slider warns above
-     the last value that was verified rather than blocking it. */
-  var GLASS = { max: 60, warnAt: 42, fallback: 22 };
-  var BLUR = { max: 40, fallback: 14 };
   var ALLOWED_TYPES = ['image/svg+xml', 'image/jpeg', 'image/png'];
 
   var body = document.body;
@@ -63,9 +56,6 @@
   var wallpaperState = document.getElementById('wallpaperState');
   var wallpaperInput = document.getElementById('wallpaperInput');
   var wallpaperNote = document.getElementById('wallpaperNote');
-  var glassAlpha = document.getElementById('glassAlpha');
-  var glassBlur = document.getElementById('glassBlur');
-  var glassWarning = document.getElementById('glassWarning');
   var wallpaperSection = document.getElementById('wallpaperSection');
   var wallpaperHint = document.getElementById('wallpaperHint');
   var themeGrid = document.getElementById('themeGrid');
@@ -229,59 +219,6 @@
     });
   }
 
-  /* Typing fires an input event per keystroke. The page is updated on every
-     one so the change is visible as it is typed, but storage is written on a
-     trailing timer: chrome.storage.sync allows only ~120 writes a minute.
-
-     While typing, an empty or out-of-range box is left alone rather than
-     rewritten under the cursor - clearing the field to type "40" would
-     otherwise fight the user. The value is tidied up on blur instead. */
-  var glassWriteTimer = null;
-
-  function readField(field, limit) {
-    var raw = field.value.trim();
-    if (raw === '') return null;
-    var n = Number(raw);
-    if (!isFinite(n)) return null;
-    return Math.min(limit.max, Math.max(0, Math.round(n)));
-  }
-
-  function onGlassInput() {
-    var alpha = readField(glassAlpha, GLASS);
-    var blur = readField(glassBlur, BLUR);
-    if (alpha === null && blur === null) return;
-
-    if (alpha === null) alpha = clampNumber(glassAlpha.value, GLASS.max, GLASS.fallback);
-    if (blur === null) blur = clampNumber(glassBlur.value, BLUR.max, BLUR.fallback);
-
-    glassWarning.hidden = alpha < GLASS.warnAt;
-    sendToTab({ type: 'setGlass', glass: alpha, glassBlur: blur });
-
-    clearTimeout(glassWriteTimer);
-    glassWriteTimer = setTimeout(function () {
-      chrome.storage.sync.set({ glass: alpha, glassBlur: blur });
-    }, 400);
-  }
-
-  /* Put the boxes back in range once the user leaves them, so "500" or an
-     empty box settles on something real instead of silently doing nothing. */
-  function onGlassCommit() {
-    setGlass(glassAlpha.value, glassBlur.value);
-    onGlassInput();
-  }
-
-  function setGlass(alpha, blur) {
-    glassAlpha.value = clampNumber(alpha, GLASS.max, GLASS.fallback);
-    glassBlur.value = clampNumber(blur, BLUR.max, BLUR.fallback);
-    glassWarning.hidden = Number(glassAlpha.value) < GLASS.warnAt;
-  }
-
-  function clampNumber(value, max, fallback) {
-    var n = Number(value);
-    if (!isFinite(n)) return fallback;
-    return Math.min(max, Math.max(0, Math.round(n)));
-  }
-
   function showNote(text, isError) {
     wallpaperNote.textContent = text;
     wallpaperNote.classList.toggle('is-error', !!isError);
@@ -428,14 +365,13 @@
 
   renderSwatches();
 
-  chrome.storage.sync.get(['darkMode', 'lmsTheme', 'animeMode', 'wallpaper', 'glass', 'glassBlur'], function (result) {
+  chrome.storage.sync.get(['darkMode', 'lmsTheme', 'animeMode', 'wallpaper'], function (result) {
     result = result || {};
     setDark(!!result.darkMode, false);
     // animeMode is on unless the user has turned it off.
     setAnime(result.animeMode === undefined ? DEFAULTS.animeMode : !!result.animeMode, false);
     selectTheme(result.lmsTheme || DEFAULT_THEME, false);
     selectWallpaper(result.wallpaper || DEFAULTS.wallpaper, false);
-    setGlass(result.glass, result.glassBlur);
     chrome.storage.local.get(['wallpaperImage'], function (local) {
       if (!chrome.runtime.lastError && local && local.wallpaperImage) {
         uploadPreview = local.wallpaperImage;
@@ -508,16 +444,6 @@
     if (items && items.length) handleFile(items[0]);
   });
 
-  [glassAlpha, glassBlur].forEach(function (field) {
-    field.addEventListener('input', onGlassInput);
-    field.addEventListener('change', onGlassCommit);
-    field.addEventListener('blur', onGlassCommit);
-    field.addEventListener('keydown', function (event) {
-      if (event.key === 'Enter') field.blur();
-    });
-  });
-
-  // Keeps two open popups (or a second window) in step with each other.
   chrome.storage.onChanged.addListener(function (changes, area) {
     if (area !== 'sync') return;
     if (changes.darkMode) setDark(!!changes.darkMode.newValue, false);
@@ -527,11 +453,5 @@
       setAnime(v === undefined ? DEFAULTS.animeMode : !!v, false);
     }
     if (changes.wallpaper) selectWallpaper(changes.wallpaper.newValue || DEFAULTS.wallpaper, false);
-    if (changes.glass || changes.glassBlur) {
-      setGlass(
-        changes.glass ? changes.glass.newValue : glassAlpha.value,
-        changes.glassBlur ? changes.glassBlur.newValue : glassBlur.value
-      );
-    }
   });
 })();
