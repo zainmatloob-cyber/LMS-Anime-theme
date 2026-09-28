@@ -11,7 +11,7 @@
      theme means adding one row plus the matching block in css/theme.css. */
   var THEMES = [
     { id: 'blue',    name: 'Midnight',  from: '#1d4ed8', to: '#38bdf8', rgb: '29, 78, 216' },
-    { id: 'crimson', name: 'Ember',     from: '#c2321c', to: '#fb923c', rgb: '194, 50, 28' },
+    { id: 'crimson', name: 'Ember',     from: '#b91c1c', to: '#fb923c', rgb: '185, 28, 28' },
     { id: 'forest',  name: 'Pine',      from: '#166534', to: '#facc15', rgb: '22, 101, 52' },
     { id: 'pink',    name: 'Blossom',   from: '#be185d', to: '#f9a8d4', rgb: '190, 24, 93' },
     { id: 'mono',    name: 'Graphite',  from: '#27272a', to: '#e4e4e7', rgb: '39, 39, 42' },
@@ -38,7 +38,22 @@
 
   /* Uploaded wallpapers go in chrome.storage.local: sync caps a single item
      at 8 KB. The cap here keeps one image well inside the local quota. */
-  var MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+  var MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+
+  /* A 4K photo is ~2.6 MB once base64 inflates it, which crowds the 5 MB
+     storage.local quota on older Chrome. Nothing on screen needs more than
+     this width, so bitmaps are redrawn smaller before being stored. SVG is
+     left alone: it is vector and already small. */
+  var MAX_IMAGE_WIDTH = 2560;
+  var JPEG_QUALITY = 0.85;
+
+  /* Glass sliders. `glass` is a transparency step away from the theme's own
+     strength, so light and dark keep their different bases (see
+     js/theme-core.js). Measured across themes, modes and wallpapers, muted
+     text holds 4.5:1 up to 40% and fails from 50%, so the slider warns above
+     the last value that was verified rather than blocking it. */
+  var GLASS = { max: 60, warnAt: 42, fallback: 22 };
+  var BLUR = { max: 40, fallback: 14 };
   var ALLOWED_TYPES = ['image/svg+xml', 'image/jpeg', 'image/png'];
 
   var body = document.body;
@@ -48,6 +63,11 @@
   var wallpaperState = document.getElementById('wallpaperState');
   var wallpaperInput = document.getElementById('wallpaperInput');
   var wallpaperNote = document.getElementById('wallpaperNote');
+  var glassAlpha = document.getElementById('glassAlpha');
+  var glassAlphaValue = document.getElementById('glassAlphaValue');
+  var glassBlur = document.getElementById('glassBlur');
+  var glassBlurValue = document.getElementById('glassBlurValue');
+  var glassWarning = document.getElementById('glassWarning');
   var wallpaperSection = document.getElementById('wallpaperSection');
   var wallpaperHint = document.getElementById('wallpaperHint');
   var themeGrid = document.getElementById('themeGrid');
@@ -211,36 +231,92 @@
     });
   }
 
+  /* Dragging a slider fires a stream of input events. The page is updated on
+     every one so the change is visible live, but storage is written on a
+     trailing timer: chrome.storage.sync allows only ~120 writes a minute. */
+  var glassWriteTimer = null;
+
+  function onGlassInput() {
+    var alpha = Number(glassAlpha.value);
+    var blur = Number(glassBlur.value);
+
+    glassAlphaValue.textContent = alpha + '%';
+    glassBlurValue.textContent = blur + 'px';
+    glassWarning.hidden = alpha < GLASS.warnAt;
+
+    sendToTab({ type: 'setGlass', glass: alpha, glassBlur: blur });
+
+    clearTimeout(glassWriteTimer);
+    glassWriteTimer = setTimeout(function () {
+      chrome.storage.sync.set({ glass: alpha, glassBlur: blur });
+    }, 250);
+  }
+
+  function setGlass(alpha, blur) {
+    glassAlpha.value = clampNumber(alpha, GLASS.max, GLASS.fallback);
+    glassBlur.value = clampNumber(blur, BLUR.max, BLUR.fallback);
+    glassAlphaValue.textContent = glassAlpha.value + '%';
+    glassBlurValue.textContent = glassBlur.value + 'px';
+    glassWarning.hidden = Number(glassAlpha.value) < GLASS.warnAt;
+  }
+
+  function clampNumber(value, max, fallback) {
+    var n = Number(value);
+    if (!isFinite(n)) return fallback;
+    return Math.min(max, Math.max(0, Math.round(n)));
+  }
+
   function showNote(text, isError) {
     wallpaperNote.textContent = text;
     wallpaperNote.classList.toggle('is-error', !!isError);
   }
 
-  /* Average brightness decides how heavy a wash the page needs over the
-     image for text to stay readable, so it is measured once here rather
-     than guessed. A 32px draw is plenty for an average and costs nothing.
-     A data: URL never taints the canvas, so the pixels stay readable. */
-  function measureTone(dataUrl, done) {
+  /* One pass over the image: shrink it if it is wider than the screen needs,
+     and measure its average brightness, which decides how heavy a wash the
+     page needs over it for text to stay readable. A data: URL never taints
+     the canvas, so the pixels stay readable. */
+  function prepareImage(dataUrl, isVector, done) {
     var img = new Image();
+
+    img.onerror = function () {
+      done({ image: dataUrl, tone: 'light', resized: false });
+    };
+
     img.onload = function () {
       try {
-        var canvas = document.createElement('canvas');
-        canvas.width = 32;
-        canvas.height = 32;
-        var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, 32, 32);
-        var px = ctx.getImageData(0, 0, 32, 32).data;
+        var width = img.naturalWidth || MAX_IMAGE_WIDTH;
+        var height = img.naturalHeight || Math.round(MAX_IMAGE_WIDTH * 9 / 16);
+        var scale = Math.min(1, MAX_IMAGE_WIDTH / width);
+
+        // Brightness first, off a tiny draw: cheap and resolution-proof.
+        var probe = document.createElement('canvas');
+        probe.width = 32;
+        probe.height = 32;
+        var pctx = probe.getContext('2d');
+        pctx.drawImage(img, 0, 0, 32, 32);
+        var px = pctx.getImageData(0, 0, 32, 32).data;
         var sum = 0;
         for (var i = 0; i < px.length; i += 4) {
-          // Rough luminance is accurate enough to pick a wash.
           sum += (px[i] * 0.2126 + px[i + 1] * 0.7152 + px[i + 2] * 0.0722) / 255;
         }
-        done(sum / (px.length / 4) < 0.5 ? 'dark' : 'light');
+        var tone = sum / (px.length / 4) < 0.5 ? 'dark' : 'light';
+
+        if (isVector || scale === 1) {
+          done({ image: dataUrl, tone: tone, resized: false });
+          return;
+        }
+
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(width * scale);
+        canvas.height = Math.round(height * scale);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        done({ image: canvas.toDataURL('image/jpeg', JPEG_QUALITY), tone: tone, resized: true });
       } catch (e) {
-        done('light');
+        done({ image: dataUrl, tone: 'light', resized: false });
       }
     };
-    img.onerror = function () { done('light'); };
+
     img.src = dataUrl;
   }
 
@@ -259,20 +335,29 @@
       return;
     }
 
+    showNote('Reading ' + file.name + '...', false);
+
     var reader = new FileReader();
     reader.onerror = function () { showNote('That image could not be read.', true); };
     reader.onload = function () {
-      var dataUrl = String(reader.result);
-      measureTone(dataUrl, function (tone) {
-        chrome.storage.local.set({ wallpaperImage: dataUrl, wallpaperTone: tone }, function () {
-          if (chrome.runtime.lastError) {
-            showNote('There was not enough room to store that image.', true);
-            return;
+      var isVector = file.type === 'image/svg+xml' || /\.svg$/.test(name);
+
+      prepareImage(String(reader.result), isVector, function (result) {
+        chrome.storage.local.set(
+          { wallpaperImage: result.image, wallpaperTone: result.tone },
+          function () {
+            if (chrome.runtime.lastError) {
+              showNote('There was not enough room to store that image. Try a smaller one.', true);
+              return;
+            }
+            uploadPreview = result.image;
+            selectWallpaper('custom', true);
+            // Stored size is what matters, not the size on disk.
+            var kb = Math.max(1, Math.round(result.image.length / 1024));
+            showNote(file.name + ' - ' + kb + ' KB stored' +
+              (result.resized ? ', resized to ' + MAX_IMAGE_WIDTH + 'px wide' : ''), false);
           }
-          uploadPreview = dataUrl;
-          selectWallpaper('custom', true);
-          showNote(file.name + ' - ' + Math.max(1, Math.round(file.size / 1024)) + ' KB', false);
-        });
+        );
       });
     };
     reader.readAsDataURL(file);
@@ -327,13 +412,14 @@
 
   renderSwatches();
 
-  chrome.storage.sync.get(['darkMode', 'lmsTheme', 'animeMode', 'wallpaper'], function (result) {
+  chrome.storage.sync.get(['darkMode', 'lmsTheme', 'animeMode', 'wallpaper', 'glass', 'glassBlur'], function (result) {
     result = result || {};
     setDark(!!result.darkMode, false);
     // animeMode is on unless the user has turned it off.
     setAnime(result.animeMode === undefined ? DEFAULTS.animeMode : !!result.animeMode, false);
     selectTheme(result.lmsTheme || DEFAULT_THEME, false);
     selectWallpaper(result.wallpaper || DEFAULTS.wallpaper, false);
+    setGlass(result.glass, result.glassBlur);
     chrome.storage.local.get(['wallpaperImage'], function (local) {
       if (!chrome.runtime.lastError && local && local.wallpaperImage) {
         uploadPreview = local.wallpaperImage;
@@ -370,12 +456,44 @@
 
   document.getElementById('wallpaperDefault').addEventListener('click', function () {
     selectWallpaper('default', true);
-    showNote('SVG, JPEG or PNG, up to 4 MB. Stored on this device.', false);
+    showNote('SVG, JPEG or PNG. Click Upload, or drag an image here.', false);
   });
 
   document.getElementById('wallpaperNone').addEventListener('click', function () {
     selectWallpaper('none', true);
   });
+
+  /* Opening the OS file dialog can close the popup on some systems, which
+     kills the upload before the change event fires. Drag-and-drop and paste
+     both avoid the dialog entirely, so either always works. */
+  var dropZone = document.querySelector('.wallpaper-panel');
+
+  ['dragenter', 'dragover'].forEach(function (type) {
+    dropZone.addEventListener(type, function (event) {
+      event.preventDefault();
+      dropZone.classList.add('is-dropping');
+    });
+  });
+
+  ['dragleave', 'dragend', 'drop'].forEach(function (type) {
+    dropZone.addEventListener(type, function () {
+      dropZone.classList.remove('is-dropping');
+    });
+  });
+
+  dropZone.addEventListener('drop', function (event) {
+    event.preventDefault();
+    var dropped = event.dataTransfer && event.dataTransfer.files;
+    if (dropped && dropped.length) handleFile(dropped[0]);
+  });
+
+  document.addEventListener('paste', function (event) {
+    var items = event.clipboardData && event.clipboardData.files;
+    if (items && items.length) handleFile(items[0]);
+  });
+
+  glassAlpha.addEventListener('input', onGlassInput);
+  glassBlur.addEventListener('input', onGlassInput);
 
   // Keeps two open popups (or a second window) in step with each other.
   chrome.storage.onChanged.addListener(function (changes, area) {
@@ -387,5 +505,11 @@
       setAnime(v === undefined ? DEFAULTS.animeMode : !!v, false);
     }
     if (changes.wallpaper) selectWallpaper(changes.wallpaper.newValue || DEFAULTS.wallpaper, false);
+    if (changes.glass || changes.glassBlur) {
+      setGlass(
+        changes.glass ? changes.glass.newValue : glassAlpha.value,
+        changes.glassBlur ? changes.glassBlur.newValue : glassBlur.value
+      );
+    }
   });
 })();

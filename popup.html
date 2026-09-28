@@ -57,8 +57,22 @@
         </div>
       </div>
     </div>
-    <p class="subsection-desc" id="wallpaperNote">SVG, JPEG or PNG, up to 4 MB. Stored on this device.</p>
+    <p class="subsection-desc" id="wallpaperNote">SVG, JPEG or PNG. Click Upload, or drag an image here.</p>
     <p class="subsection-desc" id="wallpaperHint" hidden>Turn on Anime Style to show wallpapers.</p>
+
+    <div class="slider-row">
+      <label class="slider-label" for="glassAlpha">Glass transparency</label>
+      <output class="slider-value" id="glassAlphaValue" for="glassAlpha">22%</output>
+      <input type="range" class="slider-input" id="glassAlpha" min="0" max="60" step="2" value="22">
+    </div>
+
+    <div class="slider-row">
+      <label class="slider-label" for="glassBlur">Glass blur</label>
+      <output class="slider-value" id="glassBlurValue" for="glassBlur">14px</output>
+      <input type="range" class="slider-input" id="glassBlur" min="0" max="40" step="1" value="14">
+    </div>
+
+    <p class="subsection-desc is-warning" id="glassWarning" hidden>Past 40%, text over busy wallpapers can fall below readable contrast.</p>
   </section>
 
   <div class="divider"></div>

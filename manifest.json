@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Bahria LMS Redesign",
-  "version": "3.3",
+  "version": "3.5",
   "description": "Modern UI redesign for Bahria University LMS and CMS — clean layout, anime style, glass panels over your own wallpaper, dark mode and 13 full-palette themes.",
   "action": {
     "default_popup": "popup.html",

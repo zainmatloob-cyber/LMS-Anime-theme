@@ -1,7 +1,7 @@
 # Bahria LMS Redesign — Chrome Extension
 
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4?logo=googlechrome&logoColor=white)](manifest.json)
-[![Version](https://img.shields.io/badge/version-3.3-success)](manifest.json)
+[![Version](https://img.shields.io/badge/version-3.5-success)](manifest.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 A Chrome extension that gives Bahria University's LMS and CMS a modern UI overhaul — anime-style layout, glass panels over your own wallpaper, dark mode, and 13 full-palette themes.
@@ -41,7 +41,7 @@ focus lines. Turn **Anime Style** off in the popup to get the plain redesign bac
 switch applies to every theme.
 
 ### Wallpaper and Glass
-Upload your own wallpaper from the popup: **SVG, JPEG or PNG, up to 4 MB**. The three
+Upload your own wallpaper from the popup, or drag an image onto it, or paste one: **SVG, JPEG or PNG**. Bitmaps wider than 2560px are redrawn at that width before being stored, so a 4K photo costs about 500 KB instead of 2.6 MB; SVG is left as vector. The three
 buttons are **Upload image**, **Built-in** (the Overgrown City artwork that ships with the
 extension) and **None** (plain screentone). While a wallpaper is showing, panels, the nav
 bar and the sidebar turn to frosted glass (medium strength) so the art reads through them.
@@ -56,6 +56,14 @@ result. A dark image under light glass, or a bright one under dark glass, drags 
 toward the wrong end and muted text drops below 4.5:1, so those pairings get a heavier
 wash in the page colour. Readability was measured this way across every theme, mode and
 wallpaper (182 combinations, all above 5.4:1).
+
+**Glass sliders.** Two sliders under the wallpaper set how transparent the glass is and how
+much it frosts. Transparency is stored as a step away from the theme's own strength, so
+light and dark keep the different bases they were tuned to (80% and 74%) and the slider
+moves both. Muted text holds 4.5:1 up to 40% and fails from 50%, so the popup warns above
+40% instead of blocking it. Blur runs 0-40px. Dragging updates the page live; the setting
+is written to storage on a trailing timer, since `chrome.storage.sync` allows only about
+120 writes a minute.
 
 Uploaded SVGs are used as a CSS `background-image`, so any script inside one never runs.
 
