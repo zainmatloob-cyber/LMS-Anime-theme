@@ -524,72 +524,73 @@ body.dark #wallpaperNote.is-error {
     margin: 10px 0 0;
 }
 
-/* ---------- Glass sliders ---------- */
+/* ---------- Glass fields ---------- */
 
-.slider-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: baseline;
-    gap: 4px 8px;
+.field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     margin-top: 14px;
     transition: opacity var(--popup-dur) var(--popup-ease);
 }
 
-.is-inactive .slider-row {
+.is-inactive .field-row {
     opacity: .5;
 }
 
-.slider-label {
+.field-label {
     font-size: 12px;
     font-weight: 600;
     color: var(--popup-text);
 }
 
-.slider-value {
-    font-size: 11px;
+/* The unit sits inside the box so the number and its unit read as one
+   control; the box takes the focus ring on the input's behalf. */
+.field-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 5px 8px;
+    border: 1px solid var(--popup-border);
+    border-radius: 6px;
+    background: var(--popup-surface);
+    transition: border-color var(--popup-dur) var(--popup-ease),
+                box-shadow var(--popup-dur) var(--popup-ease);
+}
+
+.field-box:focus-within {
+    border-color: var(--popup-primary);
+    box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .3);
+}
+
+.field-input {
+    width: 42px;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 12px;
     font-weight: 600;
     font-variant-numeric: tabular-nums;
-    color: var(--popup-text-muted);
+    text-align: right;
+    color: var(--popup-text);
 }
 
-.slider-input {
-    grid-column: 1 / -1;
-    width: 100%;
-    height: 18px;
-    margin: 2px 0 0;
-    background: transparent;
-    appearance: none;
-    cursor: pointer;
-}
-
-.slider-input::-webkit-slider-runnable-track {
-    height: 4px;
-    border-radius: 999px;
-    background: var(--popup-border);
-}
-
-.slider-input::-webkit-slider-thumb {
-    appearance: none;
-    width: 14px;
-    height: 14px;
-    margin-top: -5px;
-    border: none;
-    border-radius: 50%;
-    background: var(--popup-primary);
-    transition: transform var(--popup-dur) var(--popup-ease);
-}
-
-.slider-input:hover::-webkit-slider-thumb,
-.slider-input:focus-visible::-webkit-slider-thumb {
-    transform: scale(1.15);
-}
-
-.slider-input:focus-visible {
+.field-input:focus {
     outline: none;
 }
 
-.slider-input:focus-visible::-webkit-slider-thumb {
-    box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .3);
+/* Chrome's spinners are tiny and steal width; arrow keys still step. */
+.field-input::-webkit-outer-spin-button,
+.field-input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+}
+
+.field-unit {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--popup-text-muted);
 }
 
 .subsection-desc.is-warning {

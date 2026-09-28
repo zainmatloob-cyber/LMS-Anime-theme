@@ -64,9 +64,7 @@
   var wallpaperInput = document.getElementById('wallpaperInput');
   var wallpaperNote = document.getElementById('wallpaperNote');
   var glassAlpha = document.getElementById('glassAlpha');
-  var glassAlphaValue = document.getElementById('glassAlphaValue');
   var glassBlur = document.getElementById('glassBlur');
-  var glassBlurValue = document.getElementById('glassBlurValue');
   var glassWarning = document.getElementById('glassWarning');
   var wallpaperSection = document.getElementById('wallpaperSection');
   var wallpaperHint = document.getElementById('wallpaperHint');
@@ -231,32 +229,50 @@
     });
   }
 
-  /* Dragging a slider fires a stream of input events. The page is updated on
-     every one so the change is visible live, but storage is written on a
-     trailing timer: chrome.storage.sync allows only ~120 writes a minute. */
+  /* Typing fires an input event per keystroke. The page is updated on every
+     one so the change is visible as it is typed, but storage is written on a
+     trailing timer: chrome.storage.sync allows only ~120 writes a minute.
+
+     While typing, an empty or out-of-range box is left alone rather than
+     rewritten under the cursor - clearing the field to type "40" would
+     otherwise fight the user. The value is tidied up on blur instead. */
   var glassWriteTimer = null;
 
+  function readField(field, limit) {
+    var raw = field.value.trim();
+    if (raw === '') return null;
+    var n = Number(raw);
+    if (!isFinite(n)) return null;
+    return Math.min(limit.max, Math.max(0, Math.round(n)));
+  }
+
   function onGlassInput() {
-    var alpha = Number(glassAlpha.value);
-    var blur = Number(glassBlur.value);
+    var alpha = readField(glassAlpha, GLASS);
+    var blur = readField(glassBlur, BLUR);
+    if (alpha === null && blur === null) return;
 
-    glassAlphaValue.textContent = alpha + '%';
-    glassBlurValue.textContent = blur + 'px';
+    if (alpha === null) alpha = clampNumber(glassAlpha.value, GLASS.max, GLASS.fallback);
+    if (blur === null) blur = clampNumber(glassBlur.value, BLUR.max, BLUR.fallback);
+
     glassWarning.hidden = alpha < GLASS.warnAt;
-
     sendToTab({ type: 'setGlass', glass: alpha, glassBlur: blur });
 
     clearTimeout(glassWriteTimer);
     glassWriteTimer = setTimeout(function () {
       chrome.storage.sync.set({ glass: alpha, glassBlur: blur });
-    }, 250);
+    }, 400);
+  }
+
+  /* Put the boxes back in range once the user leaves them, so "500" or an
+     empty box settles on something real instead of silently doing nothing. */
+  function onGlassCommit() {
+    setGlass(glassAlpha.value, glassBlur.value);
+    onGlassInput();
   }
 
   function setGlass(alpha, blur) {
     glassAlpha.value = clampNumber(alpha, GLASS.max, GLASS.fallback);
     glassBlur.value = clampNumber(blur, BLUR.max, BLUR.fallback);
-    glassAlphaValue.textContent = glassAlpha.value + '%';
-    glassBlurValue.textContent = glassBlur.value + 'px';
     glassWarning.hidden = Number(glassAlpha.value) < GLASS.warnAt;
   }
 
@@ -492,8 +508,14 @@
     if (items && items.length) handleFile(items[0]);
   });
 
-  glassAlpha.addEventListener('input', onGlassInput);
-  glassBlur.addEventListener('input', onGlassInput);
+  [glassAlpha, glassBlur].forEach(function (field) {
+    field.addEventListener('input', onGlassInput);
+    field.addEventListener('change', onGlassCommit);
+    field.addEventListener('blur', onGlassCommit);
+    field.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') field.blur();
+    });
+  });
 
   // Keeps two open popups (or a second window) in step with each other.
   chrome.storage.onChanged.addListener(function (changes, area) {
