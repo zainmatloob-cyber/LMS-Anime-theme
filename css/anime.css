@@ -507,6 +507,8 @@ html.lms-manga.lms-wallpaper {
 html.lms-manga.lms-wallpaper :is(.box, .panel, .info-box, .small-box, .card, .well):not(:has(.modal, .form-popup, .open-button)),
 html.lms-manga.lms-wallpaper .modal-content,
 html.lms-manga.lms-wallpaper .dropdown-menu,
+html.lms-manga.lms-wallpaper .popover,
+html.lms-manga.lms-wallpaper footer#footer,
 html.lms-manga.lms-wallpaper .lms-custom-select-menu {
     background: var(--glass-surface) !important;
     -webkit-backdrop-filter: var(--glass-filter);

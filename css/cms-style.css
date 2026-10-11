@@ -1290,3 +1290,115 @@ aside#sideBar .list-group-subMenu .list-group-item,
         padding: 14px 16px 0 !important;
     }
 }
+
+/* ============================================================
+   ASPIRE 2026 MASTER-PAGE STYLES
+   ------------------------------------------------------------
+   The October 2026 CMS update injects an inline <style> block on
+   every page (and a second one on the login pages). None of it
+   uses !important, so most of it already loses to the rules above;
+   these are the pieces that still leak through.
+   ============================================================ */
+
+/* 3D sidebar bars: inset highlights and grooves on every item, a
+   "pressed" look on open parents and a shadow cast into submenus.
+   The sidebar here is flat with an accent rail, so drop all of it. */
+aside#sideBar div#sideMenuList a.list-group-item,
+aside#sideBar div#sideMenuList a.list-group-item:hover,
+aside#sideBar div#sideMenuList a.list-group-item:focus,
+aside#sideBar div#sideMenuList a.list-group-item[data-toggle="collapse"]:not(.collapsed),
+aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item:first-child {
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* The same block replaces the transition list on sidebar items with
+   background and shadow only; put colour and border back. */
+aside#sideBar div#sideMenuList a.list-group-item {
+    transition:
+        background-color var(--lms-transition),
+        color var(--lms-transition),
+        border-color var(--lms-transition) !important;
+}
+
+/* ---------- Login pages ---------- */
+
+/* A blurred campus photo pinned behind the form at z-index -1. With
+   a wallpaper on it paints over ours; without one it is hidden behind
+   the page colour anyway. */
+.overlay::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* A dark radial "smoke" blurred 30px around the sign-in panel. Once
+   the panel is glass it becomes a stacking context and the smoke ends
+   up drawn over the panel itself. */
+.overlay .panel::before {
+    content: none !important;
+    display: none !important;
+}
+
+/* The login page title sits flush on the form; keep the usual gap. */
+#form1 #pageContainer #pageContent > #pageHeading {
+    margin-bottom: 22px !important;
+}
+
+/* Icon boxes beside the login fields (Bootstrap's grey #eee). */
+.input-group-addon {
+    background: var(--lms-tint) !important;
+    color: var(--lms-primary) !important;
+    border: 1px solid var(--lms-border) !important;
+    border-radius: var(--lms-radius-sm) !important;
+    min-width: 42px !important;
+}
+
+/* Our rounded fields broke Bootstrap's joined input groups; square
+   off the edges where the addon and the field meet. */
+.input-group .input-group-addon:first-child {
+    border-right: none !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+.input-group .form-control:last-child {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+}
+.input-group .form-control:first-child:not(:last-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+/* "New Student" help popover. */
+.popover {
+    background: var(--lms-surface) !important;
+    color: var(--lms-text) !important;
+    border: 1px solid var(--lms-border) !important;
+    border-radius: var(--lms-radius) !important;
+    box-shadow: var(--lms-shadow-lg) !important;
+    font-family: var(--lms-font) !important;
+}
+.popover-title {
+    background: var(--lms-tint) !important;
+    color: var(--lms-text) !important;
+    border-bottom: 1px solid var(--lms-border) !important;
+    border-radius: var(--lms-radius) var(--lms-radius) 0 0 !important;
+    font-weight: 600 !important;
+}
+.popover-content {
+    color: var(--lms-text) !important;
+}
+.popover.right > .arrow::after  { border-right-color: var(--lms-surface) !important; }
+.popover.left > .arrow::after   { border-left-color: var(--lms-surface) !important; }
+.popover.top > .arrow::after    { border-top-color: var(--lms-surface) !important; }
+.popover.bottom > .arrow::after { border-bottom-color: var(--lms-surface) !important; }
+
+/* ---------- Footer ---------- */
+
+footer#footer {
+    background: var(--lms-surface) !important;
+    color: var(--lms-text-muted) !important;
+    border-top: 1px solid var(--lms-border) !important;
+    font-size: 12px !important;
+    line-height: 25px !important;
+}
