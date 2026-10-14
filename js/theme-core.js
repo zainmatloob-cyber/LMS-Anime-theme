@@ -70,32 +70,36 @@
 
   /* ---------- software rendering ----------------------------------------
      backdrop-filter is cheap on a GPU and very expensive without one. Edge
-     on Linux often runs without GPU acceleration (blocklisted drivers,
+     on Linux sometimes runs without GPU acceleration (blocklisted drivers,
      Wayland quirks, VMs), and there every scroll re-blurs every glass panel.
-     When WebGL reports a software renderer the glass goes solid instead.
-     The probe costs a few milliseconds, so the answer is cached per browser
-     version in the page's localStorage. */
+
+     The glass only goes solid when WebGL positively names a software
+     renderer. A missing WebGL context proves nothing (it can be disabled
+     while compositing still runs on the GPU), so that keeps the glass.
+
+     The answer is cached for the browser session only. Edge drops to
+     software rendering for a while after a GPU process crash; a permanent
+     per-site cache froze that state, so one site could stay solid while
+     the other kept its glass. */
 
   function detectSoftwareRendering() {
-    var key = navigator.userAgent;
+    // Results cached permanently by 3.8.0 could be stale; drop them.
+    try { window.localStorage.removeItem(GPU_KEY); } catch (e) { /* ignore */ }
 
     try {
-      var cached = JSON.parse(window.localStorage.getItem(GPU_KEY) || 'null');
-      if (cached && cached.ua === key) return cached.software;
+      var cached = window.sessionStorage.getItem(GPU_KEY);
+      if (cached === '1' || cached === '0') return cached === '1';
     } catch (e) { /* re-probe */ }
 
     var software = false;
     try {
       var canvas = document.createElement('canvas');
-      var gl = canvas.getContext('webgl', { failIfMajorPerformanceCaveat: true });
+      var gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
-      if (!gl) {
-        // failIfMajorPerformanceCaveat refuses software contexts outright.
-        software = true;
-      } else {
+      if (gl) {
         var info = gl.getExtension('WEBGL_debug_renderer_info');
         var renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER) || '');
-        software = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
+        software = /swiftshader|llvmpipe|softpipe|software rasterizer|microsoft basic render/i.test(renderer);
 
         var lose = gl.getExtension('WEBGL_lose_context');
         if (lose) lose.loseContext();
@@ -105,7 +109,7 @@
     }
 
     try {
-      window.localStorage.setItem(GPU_KEY, JSON.stringify({ ua: key, software: software }));
+      window.sessionStorage.setItem(GPU_KEY, software ? '1' : '0');
     } catch (e) { /* fine, probe again next time */ }
 
     return software;
