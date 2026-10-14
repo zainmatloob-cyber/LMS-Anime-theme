@@ -516,14 +516,37 @@ html.lms-manga.lms-wallpaper .lms-custom-select-menu {
 }
 
 /* Nested panels and panel groups would stack blur on blur; the inner
-   ones just let the outer glass show. */
-html.lms-manga.lms-wallpaper :is(.box, .panel) :is(.box, .panel) {
+   ones just let the outer glass show. A blurred element inside another
+   one can't see past its parent, so it would also paint solid. */
+html.lms-manga.lms-wallpaper :is(.box, .panel) :is(.box, .panel, .card, .well, .info-box, .small-box) {
     -webkit-backdrop-filter: none;
             backdrop-filter: none;
 }
 
+/* The CMS builds its sidebar menu from a .panel (#sideMenuList). The rule
+   above would give it its own blur inside the sidebar's, which paints the
+   whole menu solid; the sidebar's glass is the only layer it needs. This
+   makes it match the LMS sidebar. */
+html.lms-manga.lms-wallpaper aside#sideBar :is(.panel, .list-group, #sideMenuList) {
+    background: transparent !important;
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+}
+
+/* CMS breadcrumb: Aspire paints its strip #f0f0f0 and the list inside is
+   a solid surface. One glass strip, the same as a panel. */
+html.lms-manga.lms-wallpaper #breadCrumb {
+    background: transparent !important;
+    border-bottom: none !important;
+}
+html.lms-manga.lms-wallpaper #breadCrumb > .breadcrumb {
+    background: var(--glass-surface) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+
 /* Everything inside a panel that paints its own solid surface. */
-html.lms-manga.lms-wallpaper :is(.box-body, .box-footer, .panel-body, .panel-footer, .table, .well),
+html.lms-manga.lms-wallpaper :is(.box-body, .box-footer, .panel-body, .panel-footer, .table, .well, .notification-container),
 html.lms-manga.lms-wallpaper .table > tbody > tr > td,
 html.lms-manga.lms-wallpaper .table > thead > tr > td {
     background-color: transparent !important;
