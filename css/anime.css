@@ -552,6 +552,29 @@ html.lms-manga.lms-wallpaper .table > thead > tr > td {
     background-color: transparent !important;
 }
 
+/* Many CMS pages (Attendance, Results, Fee Challans) put a table straight
+   into the page with no panel around it. The rule above clears every table
+   for the panel behind it to show, so these floated on the bare wallpaper
+   with no glass. A table with no panel around it becomes the panel: the
+   same glass, ink outline and drop shadow an LMS box gets. The scroll
+   wrapper takes the frame when there is one, so the table can scroll inside. */
+html.lms-manga.lms-wallpaper .table-responsive:not(:is(.box, .panel, .card, .well, .modal-content) .table-responsive),
+html.lms-manga.lms-wallpaper .table:not(:is(.box, .panel, .card, .well, .modal-content, .table-responsive) .table) {
+    background: var(--glass-surface) !important;
+    border: var(--manga-line) solid var(--manga-ink) !important;
+    border-radius: var(--lms-radius) !important;
+    box-shadow: var(--manga-drop) var(--manga-drop) 0 var(--manga-shadow) !important;
+    -webkit-backdrop-filter: var(--glass-filter);
+            backdrop-filter: var(--glass-filter);
+}
+
+/* The wrapper is the frame; the table inside it stays clear and drops
+   its own outer border so the two don't double up. */
+html.lms-manga.lms-wallpaper .table-responsive:not(:is(.box, .panel, .card, .well, .modal-content) .table-responsive) > .table {
+    margin-bottom: 0 !important;
+    border: none !important;
+}
+
 /* Form fields keep more body so typed text is always crisp. */
 html.lms-manga.lms-wallpaper .form-control,
 html.lms-manga.lms-wallpaper .lms-custom-select-trigger {
