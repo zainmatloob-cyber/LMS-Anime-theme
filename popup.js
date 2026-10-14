@@ -337,7 +337,11 @@
     status.hidden = true;
   }
 
+  /* chrome.commands only exists once the browser has loaded a manifest that
+     declares "commands"; until the extension is reloaded after an update it
+     is undefined, and a throw here would stop the popup booting. */
   function showShortcut() {
+    if (!chrome.commands || !chrome.commands.getAll) return;
     chrome.commands.getAll(function (commands) {
       var command = (commands || []).filter(function (c) { return c.name === 'toggle-dark-mode'; })[0];
       shortcutHint.textContent = command && command.shortcut

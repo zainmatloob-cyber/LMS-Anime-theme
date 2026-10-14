@@ -219,6 +219,11 @@
   /* ---------- shortcut ---------------------------------------------------- */
 
   function showShortcut() {
+    // Undefined until the browser reloads a manifest that declares "commands".
+    if (!chrome.commands || !chrome.commands.getAll) {
+      shortcutText.textContent = 'Reload the extension at edge://extensions to enable the dark-mode shortcut.';
+      return;
+    }
     chrome.commands.getAll(function (commands) {
       var command = (commands || []).filter(function (c) { return c.name === 'toggle-dark-mode'; })[0];
       shortcutText.textContent = command && command.shortcut
