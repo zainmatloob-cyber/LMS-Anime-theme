@@ -1,10 +1,10 @@
-# Bahria LMS Redesign — Chrome Extension
+# Bahria LMS Redesign — Edge / Chrome Extension
 
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-4285F4?logo=googlechrome&logoColor=white)](manifest.json)
-[![Version](https://img.shields.io/badge/version-3.7-success)](manifest.json)
+[![Version](https://img.shields.io/badge/version-3.8-success)](manifest.json)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-A Chrome extension that gives Bahria University's LMS and CMS a modern UI overhaul — anime-style layout, glass panels over your own wallpaper, dark mode, and 13 full-palette themes.
+A Microsoft Edge / Chrome extension (Windows, Linux and macOS) that gives Bahria University's LMS and CMS a modern UI overhaul — anime-style layout, glass panels over your own wallpaper, dark mode, and 13 full-palette themes.
 
 **Supports:**
 - `lms.bahria.edu.pk` — Student/faculty portal (AdminLTE 2 + Bootstrap 3)
@@ -14,14 +14,28 @@ A Chrome extension that gives Bahria University's LMS and CMS a modern UI overha
 
 ## Installation
 
-> This extension is unpacked (not on the Chrome Web Store), so you load it manually.
+> This extension is unpacked (not on a web store), so you load it manually. It works the
+> same in Microsoft Edge and Google Chrome, on Windows, Linux and macOS.
 
 1. Clone or download this repository.
-2. Open Chrome and go to `chrome://extensions/`.
-3. Enable **Developer mode** (toggle in the top-right corner).
+2. Open `edge://extensions/` (Edge) or `chrome://extensions/` (Chrome).
+3. Enable **Developer mode** (left sidebar in Edge, top-right in Chrome).
 4. Click **Load unpacked**.
 5. Select this repository folder (the one containing `manifest.json`).
-6. The extension icon will appear in your toolbar.
+6. The extension icon will appear in your toolbar (in Edge, pin it from the puzzle-piece menu).
+
+### Linux notes
+
+- **Uploading a wallpaper:** on Linux the system file dialog closes the popup before the
+  file can be read. The popup's **Upload image** button therefore opens the settings page in
+  a tab, where the dialog works normally. Dragging an image onto the popup, or pasting one,
+  also works.
+- **No GPU acceleration:** if Edge is running on software rendering (blocklisted driver,
+  some Wayland setups, virtual machines), the frosted-glass blur would make scrolling
+  sluggish. The extension detects a software WebGL renderer and switches the glass to
+  near-solid panels automatically. Check `edge://gpu` if you want the blur back.
+- **Fonts:** Inter and Dela Gothic One are bundled, so pages look the same on every OS. The
+  fallback stacks include Ubuntu, Cantarell, Noto Sans, DejaVu Sans and Liberation Sans.
 
 ---
 
@@ -30,9 +44,14 @@ A Chrome extension that gives Bahria University's LMS and CMS a modern UI overha
 Click the extension icon in the toolbar to open the settings popup. The popup takes on
 whichever theme is active, so it doubles as a preview.
 
-### Dark Mode
-Toggle the **Dark Mode** switch to flip between light and dark. The setting is remembered
-across sessions and applies to both sites.
+### Colour Mode
+Choose **Light**, **Dark** or **Auto**. Auto follows your operating system's light/dark
+setting (GNOME, KDE, Windows or macOS) and switches live when it changes. The setting is
+remembered and applies to both sites.
+
+Press **Alt+Shift+D** on any page to flip between light and dark without opening the popup.
+If that clashes with something else, change it at `edge://extensions/shortcuts`; the
+settings page has a button that opens it.
 
 ### Anime Style
 On by default. Every theme is drawn as a manga page: inked panel outlines with hard
@@ -41,10 +60,26 @@ focus lines. Turn **Anime Style** off in the popup to get the plain redesign bac
 switch applies to every theme.
 
 ### Wallpaper and Glass
-Upload your own wallpaper from the popup, or drag an image onto it, or paste one: **SVG, JPEG or PNG**. Bitmaps wider than 2560px are redrawn at that width before being stored, so a 4K photo costs about 500 KB instead of 2.6 MB; SVG is left as vector. The three
-buttons are **Upload image**, **Built-in** (the Overgrown City artwork that ships with the
-extension) and **None** (plain screentone). While a wallpaper is showing, panels, the nav
-bar and the sidebar turn to frosted glass (medium strength) so the art reads through them.
+The popup shows a gallery: **None** (plain screentone), the **seven built-in artworks**
+(Overgrown City, Dawn Tide, Focus Burst, Ink Ridge, Petal Wind, Night Line, Starwatch) and
+**your own image**. While a wallpaper is showing, panels, the nav bar and the sidebar turn to
+frosted glass so the art reads through them.
+
+Upload an image with **Upload image**, by dragging one onto the popup, or by pasting one.
+Supported formats: **SVG, JPEG, PNG, WebP, AVIF, GIF, BMP and ICO** (up to 25 MB).
+
+- Small images are stored as they are, so an animated GIF stays animated.
+- Large or wide images are redrawn at 2560px wide as WebP, which keeps transparency and is
+  much smaller (a 4K photo is stored in a few hundred KB). BMP and ICO are always converted.
+- SVG is kept as vector.
+- HEIC (iPhone), TIFF, RAW and editor files can't be decoded by the browser; you get a
+  message saying how to convert them instead of a generic error.
+
+Hover your image in the gallery and click **×** (or focus it and press Delete) to remove it;
+the built-in wallpaper takes its place.
+
+**Fill / Fit** and **Centre / Top / Bottom / Left / Right** choose how the image covers the
+page and which part stays in view when it is cropped.
 
 An uploaded image is far too big for `chrome.storage.sync`, which caps one item at 8 KB,
 so it is kept in `chrome.storage.local`. That means the *choice* syncs across devices but
@@ -65,8 +100,8 @@ readability for the view.
 
 Uploaded SVGs are used as a CSS `background-image`, so any script inside one never runs.
 
-`images/wallpapers/` still holds all seven original SVGs. To make a different one the
-built-in, change `BUILT_IN` in `js/theme-core.js` and `popup.js` to match its filename.
+The built-in wallpapers are listed in `js/settings.js` (`WALLPAPERS`), each with its overall
+tone (light or dark) so the readability wash matches it.
 
 Panels that contain a modal or the LMS chat popup stay solid, because `backdrop-filter`
 would trap those fixed-position elements inside the panel.
@@ -97,6 +132,18 @@ Every theme was checked in code: text, muted text and links against solid surfac
 against the text on them, and then again against the rendered glass over every wallpaper
 in both modes (182 combinations, all above 5.4:1).
 
+### Settings page, backup and restore
+**Backup & settings** at the bottom of the popup (or *Extension options*) opens a settings page
+in a tab with:
+
+- **Your wallpaper:** upload, preview and delete (the Linux-safe way to pick a file).
+- **Backup & restore:** export everything to a `.json` file, optionally including your
+  uploaded image, and import it on another computer. Imported values are validated, so an old
+  or hand-edited backup can't break anything. **Reset to defaults** clears the settings but
+  keeps your image.
+- **Keyboard shortcut:** shows the current dark-mode shortcut and opens the browser page to
+  change it.
+
 **Upgrading from 3.1:** the 12 colour themes were rebuilt and renamed (Blue is now
 Midnight, Crimson is Ember, and so on). Their internal ids are unchanged, so your saved
 choice carries over. Shounen and Noir from 3.0 still map to Verdant.
@@ -111,7 +158,8 @@ choice carries over. Shounen and Noir from 3.0 still map to Verdant.
 │   ├── anime.css         # Shared: manga layer and glass (panels, nav, wallpaper)
 │   ├── mystyle.css       # LMS-specific layout
 │   ├── cms-style.css     # CMS-specific layout
-│   └── popup.css         # Popup styles
+│   ├── popup.css         # Popup styles
+│   └── options.css       # Settings page styles
 ├── fonts/
 │   ├── inter-latin.woff2       # Bundled Inter (latin)
 │   ├── inter-latin-ext.woff2   # Bundled Inter (latin-ext)
@@ -123,12 +171,16 @@ choice carries over. Shounen and Noir from 3.0 still map to Verdant.
 ├── icons/
 │   └── logo.png          # Extension icon
 ├── js/
-│   ├── theme-core.js     # Shared: state, messaging, flash prevention, helpers
-│   ├── content.js        # LMS DOM tweaks (avatar, themed selects)
-│   └── cms-content.js    # CMS DOM tweaks (dropdown contrast, submenus)
+│   ├── settings.js         # Shared: setting keys, defaults, themes, built-in wallpapers
+│   ├── theme-core.js       # Shared: applies settings, live sync, flash prevention, GPU check
+│   ├── wallpaper-upload.js # Shared by popup + settings page: format checks, resize, store
+│   ├── background.js       # Service worker: the Alt+Shift+D shortcut
+│   ├── content.js          # LMS DOM tweaks (avatar, themed selects)
+│   └── cms-content.js      # CMS DOM tweaks (dropdown contrast, submenus)
 ├── manifest.json
+├── options.html / options.js   # Settings page: upload, backup/restore, shortcut
 ├── popup.html
-└── popup.js              # Popup logic (storage read/write, messaging)
+└── popup.js              # Popup logic (storage read/write)
 ```
 
 ---
@@ -139,14 +191,16 @@ choice carries over. Shounen and Noir from 3.0 still map to Verdant.
   Both load `theme.css` and `theme-core.js` first, then their site-specific files.
 - All theming runs on CSS custom properties (`--lms-primary`, `--lms-bg`, …) defined once
   in `theme.css`. There is no per-color JavaScript.
-- Theme, dark mode, anime style and the wallpaper choice live in `chrome.storage.sync`, so
-  they follow you across devices; an uploaded image stays in `chrome.storage.local`.
+- Theme, colour mode, anime style and the wallpaper choice live in `chrome.storage.sync`, so
+  they follow you across devices; an uploaded image stays in `chrome.storage.local`. The keys
+  and defaults are defined once in `js/settings.js`.
 - The wallpaper is a `position: fixed` layer (`body::before`), not
   `background-attachment: fixed`, so it is composited once instead of repainting on scroll.
   The URL is an extension path or a `data:` URL, so `theme-core.js` sets it as
   `--manga-wallpaper` rather than writing it into the stylesheet.
-- The popup sends `chrome.tabs.sendMessage` to the active tab on every change; the content
-  script toggles classes (`lms-dark`, `lms-theme-*`) on `<html>` instantly.
+- The popup, settings page and keyboard shortcut only write to storage. Every open LMS/CMS
+  tab listens with `chrome.storage.onChanged` and toggles classes (`lms-dark`, `lms-theme-*`)
+  on `<html>` instantly, so all tabs stay in step.
 
 ### No flash on load
 
@@ -192,6 +246,7 @@ page load and was subject to the site's content-security policy.
 - A visible focus ring is applied on `:focus-visible` only, so mouse users keep the
   original look.
 - `prefers-reduced-motion: reduce` disables animations and smooth scrolling.
+- `prefers-reduced-transparency: reduce` turns the glass panels solid.
 
 ---
 
@@ -199,7 +254,9 @@ page load and was subject to the site's content-security policy.
 
 | Permission | Reason |
 |---|---|
-| `storage` | Save dark mode preference and selected theme |
+| `storage` | Save your settings and uploaded wallpaper |
+
+The keyboard shortcut (`commands`) and the settings page need no extra permissions.
 
 No network access, no tab history, no cookies.
 

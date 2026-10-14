@@ -83,7 +83,9 @@
     --lms-tint: rgba(var(--lms-primary-rgb), .08);
     --lms-tint-strong: rgba(var(--lms-primary-rgb), .16);
 
-    --lms-font: 'LMS Inter', 'Inter', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    /* Linux names after Roboto: only reached before the bundled Inter loads. */
+    --lms-font: 'LMS Inter', 'Inter', 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                Ubuntu, Cantarell, 'Noto Sans', 'DejaVu Sans', 'Liberation Sans', sans-serif;
 
     /* Link/accent text colour. Defaults to the theme primary, but a few dark
        themes override it below because their primary is a fill colour that is

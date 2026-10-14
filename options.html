@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LMS Redesign Settings</title>
+  <link rel="stylesheet" href="css/options.css">
+</head>
+<body class="is-loading">
+  <main class="page">
+    <header class="page-header">
+      <h1>Bahria LMS Redesign</h1>
+      <p>Wallpaper upload, backups and shortcuts. Everything else is in the toolbar popup.</p>
+    </header>
+
+    <!-- Uploading lives here as well as in the popup: on Linux the native
+         file dialog closes the popup before the file can be read. -->
+    <section class="card" id="wallpaper">
+      <h2>Your wallpaper</h2>
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-preview" id="uploadPreview" role="img" aria-label="Your uploaded wallpaper"></div>
+        <div class="dropzone-copy">
+          <p class="dropzone-title">Drop an image here, paste one, or</p>
+          <div class="row">
+            <label class="btn btn--primary">
+              Choose image
+              <input type="file" id="uploadInput" class="visually-hidden">
+            </label>
+            <button type="button" class="btn btn--danger" id="uploadRemove">Delete</button>
+          </div>
+          <p class="hint" id="uploadFormats"></p>
+        </div>
+      </div>
+      <p class="note" id="uploadNote" role="status"></p>
+    </section>
+
+    <section class="card" id="backup">
+      <h2>Backup &amp; restore</h2>
+      <p class="hint">Save your theme, colour mode and wallpaper settings to a file, and load them on
+        another computer or after reinstalling.</p>
+
+      <div class="row">
+        <button type="button" class="btn btn--primary" id="exportBtn">Export settings</button>
+        <label class="check">
+          <input type="checkbox" id="exportImage" checked>
+          Include my uploaded image
+        </label>
+      </div>
+
+      <div class="row">
+        <label class="btn">
+          Import settings…
+          <input type="file" id="importInput" class="visually-hidden" accept=".json,application/json">
+        </label>
+        <button type="button" class="btn btn--ghost" id="resetBtn">Reset to defaults</button>
+      </div>
+      <p class="note" id="backupNote" role="status"></p>
+    </section>
+
+    <section class="card" id="shortcut">
+      <h2>Keyboard shortcut</h2>
+      <p class="hint" id="shortcutText">Loading…</p>
+      <div class="row">
+        <button type="button" class="btn" id="shortcutBtn">Change shortcut</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/settings.js"></script>
+  <script src="js/wallpaper-upload.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

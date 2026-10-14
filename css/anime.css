@@ -42,7 +42,7 @@
 }
 
 html.lms-manga {
-    --manga-display: 'LMS Manga Display', 'Dela Gothic One', Impact, 'Arial Black', sans-serif;
+    --manga-display: 'LMS Manga Display', 'Dela Gothic One', Impact, 'Arial Black', 'DejaVu Sans', 'Liberation Sans', sans-serif;
     --manga-line: 2px;
     --manga-drop: 5px;
 
@@ -251,7 +251,7 @@ html.lms-manga.lms-wallpaper body::before {
     background:
         radial-gradient(circle, var(--manga-tone) 1px, transparent 1.4px) 0 0 / 7px 7px,
         linear-gradient(var(--manga-scrim), var(--manga-scrim)),
-        var(--manga-wallpaper) center / cover no-repeat,
+        var(--manga-wallpaper) var(--manga-wallpaper-pos, center) / var(--manga-wallpaper-size, cover) no-repeat,
         var(--lms-bg);
 }
 
@@ -607,5 +607,28 @@ html.lms-manga.lms-wallpaper.lms-dark[data-lms-wallpaper-tone="light"] {
         --glass-chrome: var(--lms-header-bg);
         --glass-side: var(--lms-sidebar-bg);
         --glass-slab: var(--manga-slab);
+    }
+}
+
+/* No GPU (theme-core.js sets lms-no-gpu when WebGL reports a software
+   renderer, common for Edge on Linux) or the OS asks for less
+   transparency: the blur is what costs, so it goes, and the panels keep
+   enough of their colour to stay readable without it. The wallpaper
+   still shows around them. */
+html.lms-manga.lms-wallpaper.lms-no-gpu {
+    --glass-surface: color-mix(in srgb, var(--lms-surface) 92%, transparent);
+    --glass-chrome: var(--lms-header-bg);
+    --glass-side: var(--lms-sidebar-bg);
+    --glass-slab: var(--manga-slab);
+    --glass-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    html.lms-manga.lms-wallpaper {
+        --glass-surface: var(--lms-surface);
+        --glass-chrome: var(--lms-header-bg);
+        --glass-side: var(--lms-sidebar-bg);
+        --glass-slab: var(--manga-slab);
+        --glass-filter: none;
     }
 }

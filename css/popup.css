@@ -55,7 +55,8 @@ body.dark {
 
 body {
     width: 320px;
-    font-family: 'LMS Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: 'LMS Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Ubuntu, Cantarell,
+                 'Noto Sans', 'DejaVu Sans', 'Liberation Sans', sans-serif;
     background: var(--popup-bg);
     color: var(--popup-text);
     -webkit-font-smoothing: antialiased;
@@ -386,10 +387,49 @@ body.manga .header-glow {
 }
 
 body.manga .header h1 {
-    font-family: 'LMS Manga Display', Impact, 'Arial Black', sans-serif;
+    font-family: 'LMS Manga Display', Impact, 'Arial Black', 'DejaVu Sans', 'Liberation Sans', sans-serif;
     font-weight: 400;
     font-size: 18px;
     letter-spacing: .01em;
+}
+
+/* ---------- Colour mode (Light / Dark / Auto) ---------- */
+
+.segmented {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 2px;
+    border: 1px solid var(--popup-border);
+    border-radius: 8px;
+    background: var(--popup-surface);
+}
+
+.segmented button {
+    padding: 5px 9px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--popup-text-soft);
+    cursor: pointer;
+    transition: background-color var(--popup-dur) var(--popup-ease),
+                color var(--popup-dur) var(--popup-ease);
+}
+
+.segmented button:hover {
+    background: var(--popup-hover);
+}
+
+.segmented button[aria-checked="true"] {
+    background: var(--popup-primary);
+    color: #fff;
+}
+
+.segmented button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .35);
 }
 
 /* ---------- Anime style + wallpapers ---------- */
@@ -398,57 +438,170 @@ body.manga .header h1 {
     margin-top: 14px;
 }
 
-.wallpaper-panel {
-    display: grid;
-    grid-template-columns: 104px 1fr;
-    gap: 12px;
-    align-items: center;
-    transition: opacity var(--popup-dur) var(--popup-ease);
-}
-
 /* The wallpaper choice stays editable while the manga layer is off; it is
    kept for when it comes back on. Dimming just says it isn't showing. */
-.is-inactive .wallpaper-panel {
+#wallpaperSection.is-inactive .wallpaper-grid,
+#wallpaperSection.is-inactive .wallpaper-controls {
     opacity: .5;
 }
 
-.wallpaper-preview {
-    display: block;
-    aspect-ratio: 16 / 10;
-    border: 2px solid #000;
-    border-radius: 4px;
-    background: center / cover no-repeat;
+#wallpaperSection.is-dropping {
+    outline: 2px dashed var(--popup-primary);
+    outline-offset: -6px;
+    border-radius: 10px;
 }
 
-body.dark .wallpaper-preview {
+.wallpaper-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    transition: opacity var(--popup-dur) var(--popup-ease);
+}
+
+.wall-tile {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    border: 2px solid #000;
+    border-radius: 4px;
+    background: var(--popup-bg) center / cover no-repeat;
+    cursor: pointer;
+    appearance: none;
+    transition: transform 120ms var(--popup-ease),
+                box-shadow var(--popup-dur) var(--popup-ease);
+}
+
+body.dark .wall-tile {
     border-color: #475569;
 }
 
-/* No wallpaper: show the plain screentone the page falls back to. */
-.wallpaper-preview.is-empty {
+.wall-tile:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 #000;
+}
+
+.wall-tile:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .45);
+}
+
+.wall-tile[aria-checked="true"] {
+    border-color: var(--popup-primary);
+    box-shadow: 0 0 0 2px var(--popup-primary);
+}
+
+body.dark .wall-tile[aria-checked="true"] {
+    border-color: var(--popup-pop);
+    box-shadow: 0 0 0 2px var(--popup-pop);
+}
+
+/* A tick on a coloured chip so it reads on any artwork. */
+.wall-tile[aria-checked="true"]::after {
+    content: '';
+    position: absolute;
+    right: 4px;
+    bottom: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--popup-primary);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
+}
+
+.wall-tile[aria-checked="true"] > .wall-tick {
+    display: block;
+}
+
+.wall-tick {
+    position: absolute;
+    right: 10px;
+    bottom: 8px;
+    z-index: 1;
+    display: none;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    pointer-events: none;
+}
+
+/* No wallpaper: the plain screentone the page falls back to. */
+.wall-tile--none {
     background:
         radial-gradient(circle, rgba(100, 116, 139, .45) 1px, transparent 1.4px) 0 0 / 6px 6px,
         var(--popup-surface);
 }
 
-.wallpaper-side {
-    min-width: 0;
-}
-
-.wallpaper-state {
-    margin: 0 0 8px;
-    font-size: 12px;
+.wall-tile--none::before,
+.wall-tile--custom.is-empty::before {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
     font-weight: 600;
-    color: var(--popup-text);
+    color: var(--popup-text-soft);
 }
 
-.wallpaper-actions {
+.wall-tile--none::before {
+    content: 'None';
+}
+
+.wall-tile--custom.is-empty {
+    border-style: dashed;
+    background: var(--popup-surface);
+}
+
+.wall-tile--custom.is-empty::before {
+    content: '+ Your image';
+}
+
+.wall-remove {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #dc2626;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+    opacity: 0;
+    transform: scale(.8);
+    transition: opacity var(--popup-dur) var(--popup-ease),
+                transform var(--popup-dur) var(--popup-ease-out);
+}
+
+.wall-tile--custom:not(.is-empty):hover .wall-remove,
+.wall-tile--custom:not(.is-empty):focus-visible .wall-remove {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.wall-tile--custom.is-empty .wall-remove {
+    display: none;
+}
+
+.wallpaper-controls {
     display: flex;
-    flex-wrap: wrap;
     gap: 6px;
+    margin-top: 10px;
+    transition: opacity var(--popup-dur) var(--popup-ease);
 }
 
-.mini-btn {
+.wallpaper-controls .mini-btn {
+    flex: 1;
+}
+
+.mini-btn,
+.mini-select select {
     padding: 6px 10px;
     border: 1px solid var(--popup-border);
     border-radius: 6px;
@@ -462,11 +615,27 @@ body.dark .wallpaper-preview {
                 border-color var(--popup-dur) var(--popup-ease);
 }
 
-.mini-btn:hover {
-    background: var(--popup-hover);
+.mini-select select {
+    padding-right: 22px;
+    appearance: none;
+    background:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2364748b' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E")
+        right 7px center no-repeat,
+        var(--popup-surface);
 }
 
-.mini-btn:focus-visible {
+.mini-select select:disabled {
+    opacity: .5;
+    cursor: default;
+}
+
+.mini-btn:hover,
+.mini-select select:hover:not(:disabled) {
+    background-color: var(--popup-hover);
+}
+
+.mini-btn:focus-visible,
+.mini-select select:focus-visible {
     outline: none;
     border-color: var(--popup-primary);
     box-shadow: 0 0 0 3px rgba(var(--popup-primary-rgb), .3);
@@ -482,18 +651,8 @@ body.dark .wallpaper-preview {
     background: var(--popup-accent);
 }
 
-.mini-btn.is-active {
-    border-color: var(--popup-primary);
-    color: var(--popup-primary);
-}
-
-body.dark .mini-btn.is-active {
-    border-color: var(--popup-text);
-    color: var(--popup-text);
-}
-
-/* Keeps the file input operable by keyboard and assistive tech while the
-   styled button stands in for it visually. */
+/* Keeps the file input operable by assistive tech while the styled button
+   stands in for it visually. */
 .visually-hidden {
     position: absolute;
     width: 1px;
@@ -521,11 +680,47 @@ body.dark #wallpaperNote.is-error {
 }
 
 #wallpaperHint {
-    margin: 10px 0 0;
+    margin: 6px 0 0;
 }
 
-.wallpaper-panel.is-dropping {
-    outline: 2px dashed var(--popup-primary);
-    outline-offset: 6px;
-    border-radius: 6px;
+/* ---------- Footer ---------- */
+
+.popup-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 20px 14px;
+    border-top: 1px solid var(--popup-border);
+}
+
+.shortcut-hint {
+    font-size: 10px;
+    color: var(--popup-text-muted);
+}
+
+.link-btn {
+    margin-left: auto;
+    padding: 0;
+    border: none;
+    background: none;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--popup-primary);
+    cursor: pointer;
+}
+
+body.dark .link-btn {
+    color: var(--popup-accent);
+}
+
+.link-btn:hover {
+    text-decoration: underline;
+}
+
+.link-btn:focus-visible {
+    outline: 2px solid rgba(var(--popup-primary-rgb), .45);
+    outline-offset: 2px;
+    border-radius: 2px;
 }

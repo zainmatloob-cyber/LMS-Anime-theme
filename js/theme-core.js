@@ -1,13 +1,10 @@
 /* ============================================================
    Shared theme runtime for the LMS and CMS content scripts.
-   Loaded first by both manifest entries; exposes window.LmsTheme
-   inside the isolated content-script world.
+   Loaded after js/settings.js by both manifest entries; exposes
+   window.LmsTheme inside the isolated content-script world.
 
-   Settings (chrome.storage.sync):
-     darkMode   boolean
-     lmsTheme   colour theme id
-     animeMode  boolean, default true - manga layer on every theme
-     wallpaper  'default' | 'custom' | 'none', default 'default'
+   The settings themselves (keys, defaults, built-in wallpapers) are
+   described in js/settings.js.
 
    Glass strength and blur are not settings: they come from --glass-alpha
    and --glass-blur in css/theme.css.
@@ -20,55 +17,24 @@
 (function () {
   'use strict';
 
+  var Settings = window.LmsSettings;
   var ROOT = document.documentElement;
   var MIRROR_KEY = 'lmsRedesign:theme';
-  var DEFAULT_THEME = 'blue';
-  var STORAGE_KEYS = ['darkMode', 'lmsTheme', 'animeMode', 'wallpaper'];
-
-  // Themes removed in 3.1. Anyone who had one lands on Verdant instead of
-  // silently falling back to the default blue.
-  var RETIRED_THEMES = { shounen: 'verdant', noir: 'verdant' };
-
-  // The wallpaper shipped with the extension, used until one is uploaded.
-  var BUILT_IN = 'overgrown-city';
-  var BUILT_IN_TONE = 'light';
-
-  var LOCAL_KEYS = ['wallpaperImage', 'wallpaperTone'];
+  var GPU_KEY = 'lmsRedesign:gpu';
+  var DEFAULT_THEME = Settings.DEFAULT_THEME;
 
   // Set from chrome.storage.local, which resolves separately from sync.
   var upload = { image: '', tone: 'light' };
-  var DEFAULTS = {
-    darkMode: false,
-    lmsTheme: DEFAULT_THEME,
-    animeMode: true,
-    wallpaper: 'default'
-  };
 
-  var MODES = ['default', 'custom', 'none'];
+  var state = Settings.normalise({});
 
-  var state = {
-    darkMode: DEFAULTS.darkMode,
-    lmsTheme: DEFAULTS.lmsTheme,
-    animeMode: DEFAULTS.animeMode,
-    wallpaper: DEFAULTS.wallpaper
-  };
+  // The OS colour scheme, for darkAuto. Edge on Linux reads it from the
+  // desktop's GTK/portal setting.
+  var systemDark = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
   // Callbacks the per-site scripts register to re-run their DOM tweaks
   // whenever the theme or dark mode changes.
   var listeners = [];
-
-  /* Missing keys mean "never set", which is different from false, so fill
-     them from DEFAULTS rather than coercing. */
-  function normalise(raw) {
-    raw = raw || {};
-    var theme = raw.lmsTheme || DEFAULTS.lmsTheme;
-    return {
-      darkMode: !!raw.darkMode,
-      lmsTheme: RETIRED_THEMES[theme] || theme,
-      animeMode: raw.animeMode === undefined ? DEFAULTS.animeMode : !!raw.animeMode,
-      wallpaper: MODES.indexOf(raw.wallpaper) === -1 ? DEFAULTS.wallpaper : raw.wallpaper
-    };
-  }
 
   /* ---------- synchronous mirror ----------------------------------------
      chrome.storage.sync is async, so at document_start the <html> element is
@@ -87,7 +53,7 @@
       var parsed = JSON.parse(raw);
       // Mirrors written by v2.1 used `theme` instead of `lmsTheme`.
       if (parsed.theme && !parsed.lmsTheme) parsed.lmsTheme = parsed.theme;
-      return normalise(parsed);
+      return Settings.normalise(parsed);
     } catch (e) {
       // Private mode, disabled storage, or malformed JSON - fall back to async.
       return null;
@@ -102,7 +68,56 @@
     }
   }
 
+  /* ---------- software rendering ----------------------------------------
+     backdrop-filter is cheap on a GPU and very expensive without one. Edge
+     on Linux often runs without GPU acceleration (blocklisted drivers,
+     Wayland quirks, VMs), and there every scroll re-blurs every glass panel.
+     When WebGL reports a software renderer the glass goes solid instead.
+     The probe costs a few milliseconds, so the answer is cached per browser
+     version in the page's localStorage. */
+
+  function detectSoftwareRendering() {
+    var key = navigator.userAgent;
+
+    try {
+      var cached = JSON.parse(window.localStorage.getItem(GPU_KEY) || 'null');
+      if (cached && cached.ua === key) return cached.software;
+    } catch (e) { /* re-probe */ }
+
+    var software = false;
+    try {
+      var canvas = document.createElement('canvas');
+      var gl = canvas.getContext('webgl', { failIfMajorPerformanceCaveat: true });
+
+      if (!gl) {
+        // failIfMajorPerformanceCaveat refuses software contexts outright.
+        software = true;
+      } else {
+        var info = gl.getExtension('WEBGL_debug_renderer_info');
+        var renderer = String(gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER) || '');
+        software = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
+
+        var lose = gl.getExtension('WEBGL_lose_context');
+        if (lose) lose.loseContext();
+      }
+    } catch (e) {
+      software = false;
+    }
+
+    try {
+      window.localStorage.setItem(GPU_KEY, JSON.stringify({ ua: key, software: software }));
+    } catch (e) { /* fine, probe again next time */ }
+
+    return software;
+  }
+
+  ROOT.classList.toggle('lms-no-gpu', detectSoftwareRendering());
+
   /* ---------- applying state -------------------------------------------- */
+
+  function isDark() {
+    return state.darkAuto ? !!(systemDark && systemDark.matches) : state.darkMode;
+  }
 
   function isMangaActive() {
     return state.animeMode;
@@ -127,14 +142,16 @@
   function applyWallpaper(manga) {
     var mode = state.wallpaper;
     var url = '';
-    var tone = BUILT_IN_TONE;
+    var tone = 'light';
 
     if (mode === 'custom' && upload.image) {
       url = 'url("' + upload.image + '")';
       tone = upload.tone === 'dark' ? 'dark' : 'light';
     } else if (mode !== 'none') {
       // 'default', or 'custom' with no image on this device yet.
-      url = 'url("' + chrome.runtime.getURL('images/wallpapers/' + BUILT_IN + '.svg') + '")';
+      var art = Settings.wallpaperById(state.wallpaperId) || Settings.WALLPAPERS[0];
+      url = 'url("' + chrome.runtime.getURL(Settings.wallpaperPath(art.id)) + '")';
+      tone = art.tone;
     }
 
     var show = manga && !!url;
@@ -142,17 +159,21 @@
 
     if (show) {
       ROOT.style.setProperty('--manga-wallpaper', url);
+      ROOT.style.setProperty('--manga-wallpaper-size', state.wallpaperFit);
+      ROOT.style.setProperty('--manga-wallpaper-pos', state.wallpaperPos);
       ROOT.setAttribute('data-lms-wallpaper-tone', tone);
     } else {
       ROOT.style.removeProperty('--manga-wallpaper');
+      ROOT.style.removeProperty('--manga-wallpaper-size');
+      ROOT.style.removeProperty('--manga-wallpaper-pos');
       ROOT.removeAttribute('data-lms-wallpaper-tone');
     }
   }
 
-  /* Re-read the uploaded image. Called at boot and whenever the popup says
-     the upload changed, so the message itself never carries the image. */
+  /* Re-read the uploaded image. Called at boot and whenever storage says
+     the upload changed. */
   function loadUpload(done) {
-    chrome.storage.local.get(LOCAL_KEYS, function (result) {
+    chrome.storage.local.get(Settings.LOCAL_KEYS, function (result) {
       if (!chrome.runtime.lastError && result) {
         upload.image = typeof result.wallpaperImage === 'string' ? result.wallpaperImage : '';
         upload.tone = result.wallpaperTone === 'dark' ? 'dark' : 'light';
@@ -163,16 +184,19 @@
 
   function render() {
     var manga = isMangaActive();
-    ROOT.classList.toggle('lms-dark', state.darkMode);
+    ROOT.classList.toggle('lms-dark', isDark());
     applyTheme(state.lmsTheme);
     ROOT.classList.toggle('lms-manga', manga);
     applyWallpaper(manga);
   }
 
   function update(patch) {
+    var merged = {};
+    Object.keys(state).forEach(function (key) { merged[key] = state[key]; });
     Object.keys(patch).forEach(function (key) {
-      if (patch[key] !== undefined) state[key] = patch[key];
+      if (patch[key] !== undefined) merged[key] = patch[key];
     });
+    state = Settings.normalise(merged);
     render();
     writeMirror();
     notify();
@@ -224,27 +248,64 @@
     if (state.wallpaper === 'custom') render();
   });
 
-  chrome.storage.sync.get(STORAGE_KEYS, function (result) {
+  chrome.storage.sync.get(Settings.SYNC_KEYS, function (result) {
     if (chrome.runtime.lastError) {
       if (!mirrored) render();
       clearPreload();
       return;
     }
-    update(normalise(result));
+    update(Settings.normalise(result));
     clearPreload();
   });
 
-  /* ---------- popup messages --------------------------------------------- */
+  if (systemDark) {
+    systemDark.addEventListener('change', function () {
+      if (state.darkAuto) {
+        render();
+        notify();
+      }
+    });
+  }
 
-  chrome.runtime.onMessage.addListener(function (msg) {
+  /* ---------- live updates ----------------------------------------------
+     The popup, the settings page and the keyboard shortcut all just write
+     to storage. Listening here means every open LMS/CMS tab follows along,
+     not only the one the popup was opened over. */
+
+  chrome.storage.onChanged.addListener(function (changes, area) {
+    if (area === 'sync') {
+      var patch = {};
+      var touched = false;
+      Settings.SYNC_KEYS.forEach(function (key) {
+        if (changes[key]) {
+          // A removed key goes back to its default.
+          patch[key] = changes[key].newValue === undefined
+            ? Settings.DEFAULTS[key]
+            : changes[key].newValue;
+          touched = true;
+        }
+      });
+      if (touched) update(patch);
+    }
+
+    if (area === 'local' && (changes.wallpaperImage || changes.wallpaperTone)) {
+      loadUpload(function () { update({}); });
+    }
+  });
+
+  /* ---------- messages ---------------------------------------------------- */
+
+  chrome.runtime.onMessage.addListener(function (msg, sender, reply) {
     if (!msg || !msg.type) return;
 
-    if (msg.type === 'toggleDark') update({ darkMode: !!msg.enabled });
-    if (msg.type === 'setTheme') update({ lmsTheme: normalise({ lmsTheme: msg.theme }).lmsTheme });
-    if (msg.type === 'setAnime') update({ animeMode: !!msg.enabled });
-    if (msg.type === 'setWallpaper') {
-      // The popup has already written the image to storage.local.
-      loadUpload(function () { update({ wallpaper: msg.wallpaper }); });
+    // The popup asks so it can tell the user whether this tab is themed.
+    if (msg.type === 'ping') reply({ ok: true });
+
+    // Alt+Shift+D. The background worker can't see the OS colour scheme,
+    // so the tab works out what "the other mode" is from what it shows.
+    if (msg.type === 'toggleDarkShortcut') {
+      chrome.storage.sync.set({ darkMode: !isDark(), darkAuto: false });
+      reply({ ok: true });
     }
   });
 
@@ -290,7 +351,7 @@
   window.LmsTheme = {
     DEFAULT_THEME: DEFAULT_THEME,
     onChange: function (fn) { listeners.push(fn); },
-    isDark: function () { return state.darkMode; },
+    isDark: isDark,
     isManga: isMangaActive,
     currentTheme: currentTheme,
     rafDebounce: rafDebounce,

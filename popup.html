@@ -17,13 +17,14 @@
 
     <div class="toggle-row">
       <div class="toggle-copy">
-        <label class="toggle-label" for="darkToggle">Dark Mode</label>
-        <p class="toggle-desc">Easier on the eyes at night</p>
+        <span class="toggle-label" id="schemeLabel">Colour Mode</span>
+        <p class="toggle-desc" id="schemeDesc">Auto follows your system</p>
       </div>
-      <label class="switch">
-        <input type="checkbox" id="darkToggle">
-        <span class="slider" aria-hidden="true"></span>
-      </label>
+      <div class="segmented" id="schemeControl" role="radiogroup" aria-labelledby="schemeLabel">
+        <button type="button" role="radio" data-scheme="light">Light</button>
+        <button type="button" role="radio" data-scheme="dark">Dark</button>
+        <button type="button" role="radio" data-scheme="auto">Auto</button>
+      </div>
     </div>
 
     <div class="toggle-row toggle-row--spaced">
@@ -42,22 +43,35 @@
 
   <section class="section" id="wallpaperSection">
     <h2 class="section-title" id="wallpaperTitle">Wallpaper</h2>
-    <div class="wallpaper-panel">
-      <span class="wallpaper-preview" id="wallpaperPreview" role="img" aria-label="Current wallpaper"></span>
-      <div class="wallpaper-side">
-        <p class="wallpaper-state" id="wallpaperState">Built-in wallpaper</p>
-        <!-- The input is the real control; the button just gives it a styled
-             face. Label + click keeps it keyboard reachable. -->
-        <input type="file" id="wallpaperInput" class="visually-hidden"
-               accept="image/svg+xml,image/jpeg,image/png,.svg,.jpg,.jpeg,.png">
-        <div class="wallpaper-actions">
-          <button type="button" class="mini-btn mini-btn--primary" id="wallpaperUpload">Upload image</button>
-          <button type="button" class="mini-btn" id="wallpaperDefault">Built-in</button>
-          <button type="button" class="mini-btn" id="wallpaperNone">None</button>
-        </div>
-      </div>
+
+    <!-- None, the built-in artwork from LmsSettings.WALLPAPERS, then the
+         upload slot. Built by popup.js. -->
+    <div class="wallpaper-grid" id="wallpaperGrid" role="radiogroup" aria-labelledby="wallpaperTitle"></div>
+
+    <input type="file" id="wallpaperInput" class="visually-hidden" tabindex="-1" aria-hidden="true">
+
+    <div class="wallpaper-controls">
+      <button type="button" class="mini-btn mini-btn--primary" id="wallpaperUpload">Upload image</button>
+      <label class="mini-select">
+        <span class="visually-hidden">Fit</span>
+        <select id="wallpaperFit" title="How the image fills the page">
+          <option value="cover">Fill</option>
+          <option value="contain">Fit</option>
+        </select>
+      </label>
+      <label class="mini-select">
+        <span class="visually-hidden">Position</span>
+        <select id="wallpaperPos" title="Which part of the image stays in view">
+          <option value="center">Centre</option>
+          <option value="top">Top</option>
+          <option value="bottom">Bottom</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </label>
     </div>
-    <p class="subsection-desc" id="wallpaperNote">SVG, JPEG or PNG. Click Upload, or drag an image here.</p>
+
+    <p class="subsection-desc" id="wallpaperNote"></p>
     <p class="subsection-desc" id="wallpaperHint" hidden>Turn on Anime Style to show wallpapers.</p>
   </section>
 
@@ -72,6 +86,13 @@
 
   <p class="status" id="status" role="status" hidden></p>
 
+  <footer class="popup-footer">
+    <span class="shortcut-hint" id="shortcutHint"></span>
+    <button type="button" class="link-btn" id="openSettings">Backup &amp; settings</button>
+  </footer>
+
+  <script src="js/settings.js"></script>
+  <script src="js/wallpaper-upload.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>
