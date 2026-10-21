@@ -1000,6 +1000,17 @@ html.lms-dark .lms-account-link span {
     background: var(--lms-tint) !important;
 }
 
+/* ---------- Content list groups ---------- */
+
+/* Outside the sidebar (the course evaluation survey lists each question
+   as a .list-group-item) Aspire paints rows white, which leaves dark-mode
+   text light on white. Let the panel behind show through instead. */
+#pageContent .list-group-item {
+    background: transparent !important;
+    color: var(--lms-text) !important;
+    border-color: var(--lms-border) !important;
+}
+
 /* ---------- Sidebar ---------- */
 
 .list-group-item {
