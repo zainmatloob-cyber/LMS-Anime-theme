@@ -1063,3 +1063,22 @@ html.lms-dark.lms-theme-verdant {
     --manga-tone: rgba(255, 255, 255, .05);
     --manga-scrim: rgba(0, 0, 0, .35);
 }
+
+/* ============================================================
+   HARD-CODED WHITE IN DARK MODE
+   ------------------------------------------------------------
+   Some pages (the course evaluation forms) paint their rows white
+   with inline styles or bgcolor. Dark-mode text on them is light on
+   white, so let the panel colour show through instead.
+   ============================================================ */
+html.lms-dark :is(.box, .panel, .card, .well, .content, #pageContent) :is(
+    [style*="background-color: white" i], [style*="background-color:white" i],
+    [style*="background: white" i], [style*="background:white" i],
+    [style*="background-color: #fff" i], [style*="background-color:#fff" i],
+    [style*="background: #fff" i], [style*="background:#fff" i],
+    [style*="background-color: rgb(255, 255, 255)" i],
+    [bgcolor="white" i], [bgcolor="#fff" i], [bgcolor="#ffffff" i]
+) {
+    background: transparent !important;
+    background-color: transparent !important;
+}

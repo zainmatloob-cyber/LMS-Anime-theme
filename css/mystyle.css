@@ -107,7 +107,10 @@ a {
     color: var(--lms-link) !important;
     text-decoration: none !important;
 }
-a:hover {
+/* Button-shaped links (the CMS "Sign In" is an <a class="btn btn-primary">)
+   keep their own text colour; a:hover outranks .btn-primary and would
+   paint link-coloured text on a primary fill. */
+a:not(.btn):hover {
     color: var(--lms-link) !important;
     text-decoration: none !important;
 }
