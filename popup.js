@@ -97,17 +97,16 @@
     return state.accentColor || Settings.autoAccent(state.themeColor);
   }
 
-  // The disc only changes with brightness, so it is redrawn only then.
-  function drawWheel() {
-    var v = Math.round(hsv.v * 100);
-    if (v === wheelDrawnFor) return;
-    wheelDrawnFor = v;
+  var baseCanvas = null;
+  var baseSize = 0;
 
-    var ratio = window.devicePixelRatio || 1;
-    var size = Math.round((colorWheel.clientWidth || 136) * ratio);
-    wheelCanvas.width = wheelCanvas.height = size;
+  function renderBaseWheel(size) {
+    if (baseCanvas && baseSize === size) return baseCanvas;
+    baseCanvas = document.createElement('canvas');
+    baseCanvas.width = baseCanvas.height = size;
+    baseSize = size;
 
-    var ctx = wheelCanvas.getContext('2d');
+    var ctx = baseCanvas.getContext('2d');
     var image = ctx.createImageData(size, size);
     var data = image.data;
     var r = size / 2;
@@ -119,7 +118,7 @@
         var dist = Math.sqrt(dx * dx + dy * dy);
         if (dist > r + 1) continue;
         var hue = (Math.atan2(dy, dx) * 180 / Math.PI + 360) % 360;
-        var rgb = hsvToRgb(hue, Math.min(1, dist / r), hsv.v);
+        var rgb = hsvToRgb(hue, Math.min(1, dist / r), 1);
         var i = (y * size + x) * 4;
         data[i] = rgb[0];
         data[i + 1] = rgb[1];
@@ -128,6 +127,34 @@
       }
     }
     ctx.putImageData(image, 0, 0);
+    return baseCanvas;
+  }
+
+  // The base disc is rendered once; changes in brightness overlay black via GPU compositing.
+  function drawWheel() {
+    var v = Math.round(hsv.v * 100);
+    var ratio = window.devicePixelRatio || 1;
+    var size = Math.round((colorWheel.clientWidth || 136) * ratio);
+
+    if (v === wheelDrawnFor && wheelCanvas.width === size) return;
+    wheelDrawnFor = v;
+
+    if (wheelCanvas.width !== size || wheelCanvas.height !== size) {
+      wheelCanvas.width = wheelCanvas.height = size;
+    }
+
+    var base = renderBaseWheel(size);
+    var ctx = wheelCanvas.getContext('2d');
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(base, 0, 0);
+
+    if (hsv.v < 1) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-atop';
+      ctx.fillStyle = 'rgba(0, 0, 0, ' + (1 - hsv.v) + ')';
+      ctx.fillRect(0, 0, size, size);
+      ctx.restore();
+    }
   }
 
   function paintWheel() {
@@ -143,8 +170,10 @@
     colorWheel.setAttribute('aria-valuetext', hex.toUpperCase());
 
     shadeInput.value = Math.round(hsv.v * 100);
+    var minHex = hsvToHex({ h: hsv.h, s: hsv.s, v: 0.15 });
+    var maxHex = hsvToHex({ h: hsv.h, s: hsv.s, v: 1 });
     shadeInput.style.setProperty('--shade-track',
-      'linear-gradient(90deg, #000, ' + hsvToHex({ h: hsv.h, s: hsv.s, v: 1 }) + ')');
+      'linear-gradient(90deg, ' + minHex + ', ' + maxHex + ')');
 
     if (document.activeElement !== hexInput) {
       hexInput.value = hex;
@@ -206,11 +235,9 @@
   }
 
   /* On a black wheel nothing would visibly change, so lift it until a pick
-     shows. The highlight has no Shade slider, so it always picks at full
-     brightness. */
+     shows. */
   function liftShade() {
-    if (target === 'accent') hsv.v = 1;
-    else if (hsv.v < 0.15) hsv.v = 0.15;
+    if (hsv.v < 0.15) hsv.v = 0.15;
   }
 
   function chooseTarget(name) {
@@ -383,13 +410,13 @@
       ? 'Following your system (' + (dark ? 'dark' : 'light') + ')'
       : 'Auto follows your system';
 
-    // The popup wears the light palette's main colour and highlight.
-    var light = Settings.palette(state.themeColor, state.accentColor, false);
+    // The popup wears the active mode's main colour and highlight.
+    var activePalette = Settings.palette(state.themeColor, state.accentColor, dark);
     var root = document.documentElement.style;
-    root.setProperty('--popup-primary', light['--lms-primary']);
-    root.setProperty('--popup-accent', light['--manga-pop']);
-    root.setProperty('--popup-primary-rgb', light['--lms-primary-rgb']);
-    root.setProperty('--popup-pop', light['--manga-pop']);
+    root.setProperty('--popup-primary', activePalette['--lms-primary']);
+    root.setProperty('--popup-accent', activePalette['--manga-pop']);
+    root.setProperty('--popup-primary-rgb', activePalette['--lms-primary-rgb']);
+    root.setProperty('--popup-pop', activePalette['--manga-pop']);
 
     // Colour picker.
     syncWheel();
@@ -406,13 +433,10 @@
     });
 
     accentAuto.hidden = target !== 'accent';
-    // The highlight is always lifted to stay readable under black text, so
-    // a darker shade would never show; Shade only drives the main colour.
-    shadeField.hidden = target !== 'main';
     accentAuto.setAttribute('aria-pressed', state.accentColor ? 'false' : 'true');
 
     // Strip: sidebar, buttons, links, highlight, page - in the mode shown.
-    var shown = dark ? Settings.palette(state.themeColor, state.accentColor, true) : light;
+    var shown = activePalette;
     ['--lms-sidebar-bg', '--lms-primary', '--lms-link', '--manga-pop', '--lms-bg'].forEach(function (key, i) {
       previewCells[i].style.background = shown[key];
     });
@@ -584,6 +608,11 @@
     liftShade();
     setColor(hsvToHex(hsv), false);
   });
+  colorWheel.addEventListener('keyup', function (event) {
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].indexOf(event.key) !== -1) {
+      flushColor();
+    }
+  });
 
   shadeInput.addEventListener('input', function () {
     hsv.v = Number(shadeInput.value) / 100;
@@ -620,7 +649,7 @@
   document.getElementById('colorReset').addEventListener('click', function () {
     clearTimeout(writeTimer);
     pendingWrite = null;
-    save({ themeColor: Settings.DEFAULT_COLOR, accentColor: Settings.DEFAULT_ACCENT });
+    save({ themeColor: Settings.DEFAULT_COLOR, accentColor: '' });
   });
 
   // A drag or slider still waiting on its last write when the popup closes.
