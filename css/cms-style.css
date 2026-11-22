@@ -1037,16 +1037,6 @@ html.lms-dark .lms-account-link span {
     height: 100%;
 }
 
-/* The caret should rotate with the section rather than swap between two icons. */
-.list-group-item[data-toggle="collapse"] .fa-caret-down,
-.list-group-item[data-toggle="collapse"] .fa-caret-right {
-    transition: transform var(--lms-dur) var(--lms-ease-out);
-}
-
-.list-group-item[data-toggle="collapse"].collapsed .fa-caret-down {
-    transform: rotate(-90deg);
-}
-
 /* Bootstrap animates the collapse height itself; easing it to match the rest of
    the UI is the only change needed. */
 .list-group-subMenu.collapsing {
@@ -1335,12 +1325,12 @@ aside#sideBar div#sideMenuList a.list-group-item {
 }
 
 /* Menu icons. Each top-level item is
-     <a class="list-group-item"><span class="menu-icon fas fa-…"></span>Label
-       <i class="fa fa-caret-down pull-right"></i><i class="fa fa-caret-right"></i></a>
-   Aspire positions the icon and the caret-right out of flow, relying on its
-   own left padding to keep the label clear; with our padding the icon and a
-   stray caret landed on top of the first letters. Lay the row out ourselves:
-   icon in a fixed column, label, one caret pushed to the right edge. */
+     <a class="list-group-item"><span class="menu-icon fas fa-…"></span>Label</a>
+   (the <i> carets still in the markup are hidden by Aspire since Nov 2026;
+   the arrow is its a[data-toggle]::after chevron, handled below).
+   Aspire positions the icon out of flow, relying on its own left padding to
+   keep the label clear; with our padding the icon landed on top of the first
+   letters. Lay the row out ourselves: icon in a fixed column, then label. */
 aside#sideBar div#sideMenuList a.list-group-item {
     display: flex !important;
     align-items: center !important;
@@ -1361,17 +1351,301 @@ aside#sideBar div#sideMenuList a.list-group-item > .menu-icon {
     line-height: 1 !important;
 }
 
-/* The caret-down rotates for the collapsed state (see "Sidebar" above), so
-   the second caret is redundant and is the one that strayed over the icon. */
-aside#sideBar div#sideMenuList a.list-group-item > .fa-caret-right {
-    display: none !important;
+/* ============================================================
+   ASPIRE NOVEMBER 2026 SIDEBAR AND PROFILE MENU
+   ------------------------------------------------------------
+   The November update moved the master-page styles into
+   Aspire.min.css, scoped per skin as
+     body.<Skin>>form#form1>div#pageContainer>aside#sideBar …
+   That is four ids, and the current-page link uses !important at
+   that weight, so the overrides below that have to beat it add
+   `:not(#_)` (an id selector that never matches) to reach five.
+   ============================================================ */
+
+/* Expand arrows. Aspire draws a Font Awesome chevron in
+   a[data-toggle]::after and rotates it when the section opens. Our
+   list-group accent rail (see "Sidebar" above) also lives on ::after,
+   so the two merged: the chevron took the rail's left:0 and sat over
+   the icon, and an open section rotated the full-height rail into a
+   bar across the row. In the sidebar ::after is Aspire's chevron only;
+   the left border already marks hover and the open branch. */
+aside#sideBar div#sideMenuList a.list-group-item::after {
+    left: auto;
+    width: auto;
+    height: auto;
+    background: none;
+    border-radius: 0;
+    transform: none;
 }
 
-aside#sideBar div#sideMenuList a.list-group-item > .fa-caret-down {
-    position: static !important;
-    float: none !important;
-    margin: 0 0 0 auto !important;
-    flex: 0 0 auto !important;
+/* Room on the right for the chevron (Aspire puts it at right:14px). */
+aside#sideBar div#sideMenuList a.list-group-item[data-toggle] {
+    padding-right: 34px !important;
+}
+
+/* An open parent reads white, as Aspire intends, on our background. */
+aside#sideBar div#sideMenuList a.list-group-item[data-toggle]:not(.collapsed) {
+    color: #fff !important;
+}
+
+/* Submenu bullets: a guide line down the branch and a dot per link.
+   Aspire fills the dots with the skin colour; use the theme's. */
+aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item::before {
+    background-color: var(--lms-sidebar-bg) !important;
+    border-color: rgba(255, 255, 255, .35) !important;
+}
+
+aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item:hover::before,
+aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item:focus::before {
+    background-color: var(--lms-sidebar-active) !important;
+    border-color: var(--lms-sidebar-active) !important;
+}
+
+/* Third-level menus: Aspire gives them a solid skin-coloured block. */
+aside#sideBar div#sideMenuList div.list-group-subMenu div.list-group-subMenu {
+    background-color: rgba(0, 0, 0, .15) !important;
+}
+
+aside#sideBar div#sideMenuList div.list-group-subMenu div.list-group-subMenu > a.list-group-item {
+    padding-left: 64px !important;
+}
+
+/* The section holding the current page keeps an accent edge while open. */
+aside#sideBar div#sideMenuList a.list-group-item.current-parent {
+    border-left-color: var(--lms-sidebar-active) !important;
+}
+
+/* The current page. Aspire marks it with .current (any depth) and paints
+   a white pill in the skin colour, all !important. Restate our active-item
+   look on top of it. */
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:focus {
+    color: #fff !important;
+    font-weight: 600 !important;
+    background: rgba(var(--lms-primary-rgb), .22) !important;
+    border-left: 3px solid var(--lms-sidebar-active) !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current > span.menu-icon,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover > span.menu-icon,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:focus > span.menu-icon {
+    background-color: rgba(255, 255, 255, .25) !important;
+    border-color: transparent !important;
+    color: #fff !important;
+    box-shadow: none !important;
+}
+
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current::before,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover::before,
+#form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:focus::before {
+    background-color: var(--lms-sidebar-active) !important;
+    border-color: var(--lms-sidebar-active) !important;
+    box-shadow: 0 0 0 3px rgba(var(--lms-primary-rgb), .3) !important;
+}
+
+/* ---------- Profile menu ----------
+   The account dropdown is now a card (avatar, name, email), the action
+   rows (Profile, Sign Out, Change Password; each an <a> with an <i> icon
+   box Aspire pins at left:14px) and, for staff with several roles, a role
+   switcher (li.profile-roles-header, li.profile-role, .Active).
+   The generic dropdown rules above reset the rows' 50px left padding, which
+   put the text under the icons, and the dark-mode rules above paint every
+   row and icon white; `:not(#_)` lifts these over both. */
+
+/* The menu's own background, border and shadow come from the dropdown
+   rules (solid, or glass over a wallpaper); the rows only tint on top. */
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu {
+    min-width: 280px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 0 0 var(--lms-radius) var(--lms-radius) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card:hover {
+    background: var(--lms-primary) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card > div {
+    margin: 0 !important;
+    padding: 18px 12px 14px !important;
+    border-radius: 0 !important;
+    background: var(--lms-primary) !important;
+    box-shadow: none !important;
+    text-align: center !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card > div > canvas,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card > div > img {
+    display: block !important;
+    margin: 0 auto 8px !important;
+    border: 3px solid rgba(255, 255, 255, .85) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .3) !important;
+}
+
+/* In dark mode the main colour is light, so the card text follows the
+   palette's on-primary colour instead of always being white. */
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card > div > span.name {
+    display: block !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: .3px !important;
+    color: var(--lms-on-primary) !important;
+    text-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-card > div > span.email {
+    display: block !important;
+    margin-top: 2px !important;
+    font-size: 12px !important;
+    color: var(--lms-on-primary-muted) !important;
+}
+
+/* Action rows. */
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action:hover {
+    background: transparent !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a {
+    position: relative !important;
+    display: block !important;
+    padding: 11px 16px 11px 50px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: var(--lms-text) !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-left: 3px solid transparent !important;
+    border-bottom: 1px solid var(--lms-border) !important;
+    box-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action:last-child > a {
+    border-bottom: 0 !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a > i {
+    position: absolute !important;
+    left: 14px !important;
+    top: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    margin-top: -12px !important;
+    line-height: 24px !important;
+    font-size: 11px !important;
+    text-align: center !important;
+    border-radius: var(--lms-radius-sm) !important;
+    background: var(--lms-tint-strong) !important;
+    color: var(--lms-link) !important;
+    opacity: 1 !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a:hover,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a:focus {
+    color: var(--lms-link) !important;
+    background: var(--lms-tint) !important;
+    border-left-color: var(--lms-primary) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a:hover > i,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action > a:focus > i {
+    background: var(--lms-primary) !important;
+    color: var(--lms-on-primary) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action.profile-signout > a:hover,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action.profile-signout > a:focus {
+    color: var(--lms-danger-text) !important;
+    background: rgba(220, 38, 38, .10) !important;
+    border-left-color: var(--lms-danger) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action.profile-signout > a:hover > i,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-action.profile-signout > a:focus > i {
+    background: var(--lms-danger) !important;
+    color: var(--lms-on-danger) !important;
+}
+
+/* Role switcher. */
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-roles-header {
+    padding: 10px 16px 6px 17px !important;
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    color: var(--lms-text-muted) !important;
+    background: var(--lms-tint) !important;
+    box-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role:hover,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active {
+    background: var(--lms-tint) !important;
+    box-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role::before {
+    background-color: var(--lms-border) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a {
+    position: relative !important;
+    display: block !important;
+    padding: 8px 30px 8px 46px !important;
+    font-size: 12.5px !important;
+    font-weight: 400 !important;
+    color: var(--lms-text) !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a::before {
+    background-color: var(--lms-surface) !important;
+    border-color: var(--lms-text-muted) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a:hover,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a:focus {
+    color: var(--lms-link) !important;
+    background: var(--lms-tint) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a:hover::before,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role > a:focus::before {
+    background-color: var(--lms-primary) !important;
+    border-color: var(--lms-primary) !important;
+}
+
+/* The role in use: a tinted tab with an accent edge instead of the
+   white pill, and the tick in the link colour. */
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active > a,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active > a:hover,
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active > a:focus {
+    margin: 2px 10px 2px 0 !important;
+    font-weight: 700 !important;
+    color: var(--lms-text) !important;
+    background: var(--lms-tint-strong) !important;
+    border-left: 4px solid var(--lms-primary) !important;
+    border-radius: 0 20px 20px 0 !important;
+    box-shadow: none !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active > a::before {
+    background-color: var(--lms-primary) !important;
+    border-color: var(--lms-primary) !important;
+    box-shadow: 0 0 0 3px rgba(var(--lms-primary-rgb), .3) !important;
+}
+
+#AccountsNavbar:not(#_) ul.dropdown-menu.profile-menu > li.profile-role.Active > a::after {
+    color: var(--lms-link) !important;
 }
 
 /* ---------- Login pages ---------- */

@@ -393,6 +393,44 @@ html.lms-manga #sideMenuList > a.list-group-item.active {
     clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
 }
 
+/* The CMS marks the current page with .current since November 2026 and
+   styles it !important at four ids (see cms-style.css); `:not(#_)` takes
+   these to five. Same highlighter stroke and slanted cut as .active. */
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current,
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover,
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:focus {
+    color: var(--manga-on-pop) !important;
+    font-weight: 700 !important;
+    background: var(--manga-pop) !important;
+    border-left-color: var(--manga-pop) !important;
+    margin: 0 10px 0 0 !important;
+    clip-path: polygon(0 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+}
+
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current > span.menu-icon,
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover > span.menu-icon {
+    background-color: rgba(0, 0, 0, .14) !important;
+    color: var(--manga-on-pop) !important;
+}
+
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current::before,
+html.lms-manga #form1 #pageContainer aside#sideBar div#sideMenuList:not(#_) a.list-group-item.current:hover::before {
+    background-color: var(--manga-on-pop) !important;
+    border-color: var(--manga-on-pop) !important;
+    box-shadow: none !important;
+}
+
+html.lms-manga aside#sideBar div#sideMenuList a.list-group-item.current-parent {
+    border-left-color: var(--manga-stripe) !important;
+}
+
+/* Submenu dots light up in the stripe colour, like the hover rail. */
+html.lms-manga aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item:hover::before,
+html.lms-manga aside#sideBar div#sideMenuList div.list-group-subMenu > a.list-group-item:focus::before {
+    background-color: var(--manga-stripe) !important;
+    border-color: var(--manga-stripe) !important;
+}
+
 html.lms-manga .user-image,
 html.lms-manga .navbar-nav .avatar {
     box-shadow: 0 0 0 2px var(--manga-pop) !important;
