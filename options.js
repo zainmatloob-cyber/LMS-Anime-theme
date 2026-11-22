@@ -33,13 +33,14 @@
   /* ---------- painting ---------------------------------------------------- */
 
   function paint() {
-    var colors = Settings.palette(state.themeColor, state.accentColor, false);
+    var dark = state.darkAuto ? systemDark.matches : state.darkMode;
+    var colors = Settings.palette(state.themeColor, state.accentColor, dark);
     var root = document.documentElement.style;
     root.setProperty('--accent', colors['--lms-primary']);
     root.setProperty('--accent-2', colors['--manga-pop']);
     root.setProperty('--accent-rgb', colors['--lms-primary-rgb']);
 
-    body.classList.toggle('dark', state.darkAuto ? systemDark.matches : state.darkMode);
+    body.classList.toggle('dark', dark);
 
     uploadPreview.style.backgroundImage = uploadImage ? 'url("' + uploadImage + '")' : '';
     uploadPreview.style.backgroundSize = state.wallpaperFit;

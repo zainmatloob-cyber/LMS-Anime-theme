@@ -70,7 +70,7 @@
     darkMode: false,
     darkAuto: false,
     themeColor: DEFAULT_COLOR,
-    accentColor: DEFAULT_ACCENT,
+    accentColor: '',
     animeMode: true,
     wallpaper: 'default',
     wallpaperId: WALLPAPERS[0].id,
@@ -108,7 +108,7 @@
     if (!color) {
       var legacy = LEGACY_THEMES[raw.lmsTheme];
       color = legacy ? legacy[0] : DEFAULT_COLOR;
-      if (accent === null) accent = legacy ? legacy[1] : DEFAULT_ACCENT;
+      if (accent === null) accent = legacy ? legacy[1] : '';
     }
     if (accent === null) accent = '';
 
@@ -216,8 +216,12 @@
   /* Step lightness from `l` by `step` until the colour reaches `ratio`
      against `against`, or runs out of range. */
   function reach(h, s, l, against, ratio, step) {
+    var againstLum = typeof against === 'number' ? against : luminance(against);
     var hex = hsl(h, s, l);
-    while (contrast(hex, against) < ratio && (step < 0 ? l > 0 : l < 1)) {
+    while (step < 0 ? l > 0 : l < 1) {
+      var lum = luminance(hex);
+      var c = (Math.max(lum, againstLum) + 0.05) / (Math.min(lum, againstLum) + 0.05);
+      if (c >= ratio) break;
       l = clamp(l + step, 0, 1);
       hex = hsl(h, s, l);
     }
@@ -258,9 +262,11 @@
       var navY = 0.035 + 0.035 * t;
       var nav = hsl(H, dS, navY);
       var surface = hsl(H, dS * 0.75, navY + 0.075);
-      var primaryDk = reach(H, S, 0.3, nav, 7.5, 0.01);
-      var linkDk = reach(H, S, lightnessOf(primaryDk), surface, 9.5, 0.01);
-      var hiDk = reach(a.h, a.s, Math.max(a.l, 0.5), nav, 9, 0.01);
+      var deepest = lightnessOf(reach(H, S, 0.3, nav, 5.5, 0.01));
+      var brightest = lightnessOf(reach(H, S, deepest, nav, 8.5, 0.01));
+      var primaryDk = reach(H, S, deepest + (brightest - deepest) * t, nav, 5.5, 0.01);
+      var linkDk = reach(H, S, lightnessOf(primaryDk) + 0.04, surface, 8.5, 0.01);
+      var hiDk = reach(a.h, a.s, Math.max(a.l, 0.5 + 0.15 * t), nav, 8.5, 0.01);
 
       return {
         '--lms-primary': primaryDk,
